@@ -1,13 +1,17 @@
 import uvicorn
 import random, string
 
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, HTTPException, Security
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from models import *
 from database_utils import *
+from auth import Auth
 
 app = FastAPI()
+security = HTTPBearer()
+auth_handler = Auth()
 
 
 def random_str(length=32):
@@ -20,45 +24,72 @@ def root():
     return {"msg": "Blockchain Project API"}
 
 
-@app.post("/register", status_code=201)
+@app.post("/register", status_code=201, responses={
+    500: {"description": "Username exists / Server Error"}
+})
 def register(register_form: CredentialsForm):
-    if user_exist(register_form.username):
+    try:
+        if user_exist(register_form.username):
+            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                content={"msg": "The username already exists"})
+        else:
+            hashed_password = auth_handler.encode_password(register_form.password)
+            create_user(register_form.username, hashed_password, random_str())
+    except:
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            content={"msg": "username exists"})
-    else:
-        print(register_form.username)
-        print(register_form.password)
-        create_user(register_form.username, register_form.password, random_str())
+                            content={"msg": "Fail to register"})
 
 
-@app.post("/login")
+@app.post("/login", status_code=201, responses={
+    401: {"description": "Invalid Username/ Password"},
+    500: {"description": "Server Error"}
+})
 def login(login_form: CredentialsForm):
-    return login_form
+    try:
+        user = get_user(login_form.username)
+        if user is None:
+            return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid username"})
+        if not auth_handler.verify_password(login_form.password, user['password']):
+            return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid password"})
+        token = auth_handler.encode_token(user['username'])
+        return {'token': token}
+    except:
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": "Fail to login"})
 
 
-@app.get("/organizations")
-def organizations():
-    return {"organizations": "organizations api"}
+@app.get("/organizations", status_code=200)
+def organizations(credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        return {"msg": "authorized organizations"}
 
 
-@app.get("/transactions")
-def transactions():
-    return {"transactions": "transactions api"}
+@app.get("/transactions", status_code=200)
+def transactions(credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        return {"msg": "authorized transactions"}
 
 
-@app.post("/send")
-def send():
-    return {"send": "send api"}
+@app.post("/send", status_code=201)
+def send(credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        return {"msg": "authorized send"}
 
 
-@app.post("/topup")
-def topup():
-    return {"topup": "topup api"}
+@app.post("/top_up", status_code=201)
+def top_up(credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        return {"msg": "authorized top_up"}
 
 
-@app.post("/rate")
-def rate():
-    return {"rate": "rate api"}
+@app.post("/rate", status_code=201)
+def rate(credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        return {"msg": "authorized rate"}
 
 
 if __name__ == "__main__":

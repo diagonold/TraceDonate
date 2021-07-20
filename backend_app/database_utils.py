@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 DB_FILE = "database.db"
 
@@ -24,8 +25,23 @@ def create_user(username, password, wallet):
                     VALUES(?,?,?)""",
                     (username, password, wallet))
         res = cur.fetchall()
-        print(res)
-        # return len(res) == 1
+
+
+def get_user(username):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    SELECT username, password
+                    FROM "user"
+                    WHERE username = (?)
+                    """,
+                    (username,))
+        res = cur.fetchall()
+        if len(res) == 1:
+            return {"username": res[0][0], "password": res[0][1]}
+
+        return None
+
 
 
 if __name__ == '__main__':
@@ -33,4 +49,5 @@ if __name__ == '__main__':
     # init_tables()
     # create_user('a', 'b', 'c')
     # print(db.user_exist('a'))
-    create_user(2,2,3)
+    # create_user(2,2,3)
+    print(get_user('aaaaa'))
