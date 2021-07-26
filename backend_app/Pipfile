@@ -9,6 +9,7 @@ fastapi = "*"
 pyjwt = "*"
 passlib = "*"
 bcrypt = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

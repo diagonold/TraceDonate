@@ -8,11 +8,7 @@ export default class Auth {
 
     async login(payload) {
         try {
-            const response = await AxiosInstance.post("/login/", payload, {
-                headers: {
-                    "Authorization": `Bearer ${this.token}`
-                }
-            });
+            const response = await AxiosInstance.post("/login/", payload);
             return response;
         } catch(err) {
             console.log(err);
