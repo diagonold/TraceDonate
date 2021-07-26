@@ -3,7 +3,7 @@ class LocalStorageUtil {
         return JSON.parse(localStorage.getItem(key));
     }
 
-    create() {
+    create(key, value) {
         localStorage.setItem(key, JSON.stringify(value));
     }
 
