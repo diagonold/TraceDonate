@@ -8,6 +8,7 @@ uvicorn = "*"
 fastapi = "*"
 pyjwt = "*"
 passlib = "*"
+bcrypt = "*"
 
 [dev-packages]
 
