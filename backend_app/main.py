@@ -1,10 +1,7 @@
 import uvicorn
 import random, string
-import os
 
-from dotenv import load_dotenv
-
-from fastapi import FastAPI, status, HTTPException, Security
+from fastapi import FastAPI, status, Security
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,25 +14,14 @@ app = FastAPI()
 security = HTTPBearer()
 auth_handler = Auth()
 
-load_dotenv()
-
-DEV = os.getenv("DEV") == "True"
-
-origins = []
-
-if DEV:
-    origins += [
-        "http://localhost",
-        "http://localhost:3000",
-    ]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["http://localhost", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
 
 def random_str(length=32):
     letters = string.ascii_lowercase
