@@ -1,90 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity >=0.7.0 <0.9.0;
 
-
-
-
-/**
-Here are things missing in the contract
-1. The contract should be able to track all the organization's address
-2. The contract should be able to track all the organization's total collected donation
-3. Should the donation be time base so that there is a limited amount of time a user can donate?
-
-Should an organization have its own contract 
-1. This will be for their sepnding
-2. This contract will keep track of 
-
-
-Should merchants have their own contracts
-1. This is so that they can be categorized
-2. This limits the addresses that they can spend on....
-3. 
-
-
-Currently buggy when tested with remix, Enquire professor or alex on this!!!
- */
-
-
-// contract Donation {
-
-//     // state variables
-//     address donator;
-//     address payable public receiver;
-//     uint public amount; 
-    
-//     // Declaring events for web3.payable
-//     event Donated(address donator, address receiver, uint amount);
-    
-//     constructor (address payable _receiver ) payable {
-//         donator = msg.sender;
-//         receiver = _receiver;
-//     }
-    
-    
-//     function sendDonation( ) public payable{
-//         require(donator.balance >= amount);
-//         // Call returns a boolean value indicating success or failure.
-//         // This is the current recommended method to use.
-//         // returns (bool sent, bytes memory data)
-//         (bool success,  ) = receiver.call{value: amount}("");
-//         require( success, " Transfer failed");
-//         emit Donated(donator, receiver, amount);
-        
-//     }
-    
-//     function getAmount() public view returns (uint){
-//         return amount;
-//     }
-    
-//     function setAmount( uint _amount) public {
-//         amount = _amount;
-//     }
-    
-    
-// }
-
-
-
-// contract ProjectList {
-    
-//     // state variables
-//     address[] public projects;
-    
-//     function create_project(){
-//     // Create a new address for that project based on current time and adds it to the projects list
-
-//         address addr = address(keccak256(abi.encodePacked(now)));
-//         projects.push(addr);
-//     }
-    
-//     function get_projects() public view returns (address){
-//     // Returns the array containing all the projects addresses
-//         return projects;
-//     }
-// }
-
-contract Project {
+contract Project{
     // Storage state cariables
     address public owner;
     string public description;
@@ -105,6 +22,12 @@ contract Project {
         uint numberOfVoters;
         mapping (address=>bool) voters;
     }
+    
+    // Events needed by the web app
+    event Contribute( address donor, uint amount);
+    event CreateRequest( address owner, address recipient, string requestDescription, uint value );
+    event PaymentMade( address owner, address recipient, uint value );
+    event DonorVote( address donor);
     
     // Modifiers to automatically check a condition, prior to executing a function
     modifier onlyAdmin{
@@ -127,6 +50,8 @@ contract Project {
     }
     
     function contribute() public payable{
+        // A payable function will store the value that is sent to that account
+        // and will be trapped there unless there is a withdraw function
         // Conditions for executing the rest of the function
         require( msg.value > minDonation);
         // Checking whether this is the first time the person is contributing
@@ -137,6 +62,7 @@ contract Project {
         // Add the amount sent to his previous contributions
         donations[msg.sender] += msg.value;
         raisedDonation += msg.value;
+        emit Contribute( msg.sender, msg.value);
     }
     
     // Project owner creates a request before he can spend his money
@@ -149,7 +75,7 @@ contract Project {
         newRequest.recipient = _recipient;
         newRequest.numberOfVoters = 0;
         newRequest.completed = false;
-        
+        emit CreateRequest( msg.sender, _recipient, _requestDescription, _value);
     }
     
     function vote_request(uint index) public goalReached{
@@ -167,6 +93,7 @@ contract Project {
         // We only count positive votes
         thisRequest.voters[msg.sender] = true;
         thisRequest.numberOfVoters++;
+        emit DonorVote(msg.sender);
     }
     
     
@@ -183,8 +110,6 @@ contract Project {
         // Performing the transder operation
         thisRequest.recipient.transfer(thisRequest.value);
         thisRequest.completed = true;
-    
-        
+        emit PaymentMade( msg.sender, thisRequest.recipient, thisRequest.value );
     }
-    
 }
