@@ -2,7 +2,7 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "/home/ryansacatani/Documents/SUTD/Term_8/50.037_BlockchainTechnology/TraceDonate/Contract/Project.sol";
+import "./Project.sol";
 
 
 contract ProjectHub {
