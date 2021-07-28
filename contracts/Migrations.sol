@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Do not touch this file. This is for migration only. 
+// Do not touch this file. This is for migration only.
 pragma solidity >=0.4.22 <0.9.0;
 
 contract Migrations {
