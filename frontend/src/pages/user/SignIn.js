@@ -1,39 +1,24 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useHistory } from 'react-router-dom';
 import AuthServices from '../../services/Auth';
-import BlockchainServices from '../../services/Blockchain';
 import LocalStorageutil from '../../utils/LocalStorage';
+
+import WelcomeTitles from '../../components/WelcomeTitles';
+
+import { signInSchema } from '../../schema/User';
 
 const authServices = new AuthServices();
 
 export default function SignIn() {
-
-	useEffect(() => {
-		(async () => {
-			const token = LocalStorageutil.read("token");
-			if (token) {
-				const blockchainServices = new BlockchainServices();
-				try {
-					const response = await blockchainServices.getOrganizations();
-					if (response.status === 200) {
-						console.log("Active session");
-						history.push("/");
-					}
-				} catch(err) {
-					console.log("No active session");
-					LocalStorageutil.remove("token");
-				} 
-			}
-		})();
-	}, []);
 
 	const {
 		register,
 		formState: { 
 			errors 
 		}, handleSubmit
-	} = useForm();
+	} = useForm({resolver: yupResolver(signInSchema) });
 
 	const history = useHistory();
 
@@ -52,18 +37,17 @@ export default function SignIn() {
 
     return (
     	<div class="container-fluid mt-5">
-        	<h1>TraceDonate</h1>
-        	<h3>You know what it is about</h3>
+			<WelcomeTitles />
         	<form onSubmit={handleSubmit(onSubmitLogin)}>
 				<div className="form-group">
 					<label className="text-dark">Username: </label>
-					<input type="text" {...register("username", {required: { value: true }})} />
-                    <div className="error text-danger">{errors.username?.type === "required" && "Must input username"}</div>
+					<input type="text" {...register("username")} />
+                    <div className="error text-danger">{errors.username?.message}</div>
 				</div>
 				<div className="form-group">
 					<label className="text-dark">Password: </label>
-					<input type="password" {...register("password", {required: { value: true }})} />
-					<div className="error text-danger">{errors.password?.type === "required" && "Must input password"}</div>
+					<input type="password" {...register("password")} />
+					<div className="error text-danger">{errors.password?.message}</div>
 				</div>
 				<input className="btn btn-primary" type="submit" value="Sign In" />
         	</form>
