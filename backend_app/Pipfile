@@ -10,6 +10,7 @@ pyjwt = "*"
 passlib = "*"
 bcrypt = "*"
 python-dotenv = "*"
+web3 = "*"
 
 [dev-packages]
 
