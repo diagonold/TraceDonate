@@ -5,6 +5,8 @@ import LocalStorageUtil from '../utils/LocalStorage';
 
 export default function Home() {
 
+	const history = useHistory();
+
 	useEffect(() => {
 		(async () => {
 			const token = LocalStorageUtil.read("token");
@@ -14,23 +16,17 @@ export default function Home() {
 					const response = await blockchainServices.getOrganizations();
 					if (response.status === 200) {
 						console.log("Active session");
-						history.push("/");
 					}
 				} catch(err) {
 					console.log("No active session");
 					LocalStorageUtil.remove("token");
+					history.push("/login");
 				} 
+			} else {
+				history.push("/login");
 			}
 		})();
 	}, []);
-
-	const history = useHistory();
-
-	useEffect(() => {
-		if (!LocalStorageUtil.read("token")) {
-			history.push("/login");
-		}
-	}, []) 
 
     return (
         <h1>TraceDonate</h1>
