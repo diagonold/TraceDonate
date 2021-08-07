@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setNotLoggedIn } from '../../redux/reducers/loggedInReducer';
+import { useHistory } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import Transaction from './Transaction';
 
@@ -8,11 +11,18 @@ const blockchainServices = new BlockchainServices();
 
 export default function Index() {
 
+    const dispatch = useDispatch();
+    const history = useHistory();
+
     useEffect(() => {
         (async () => {
             const request = await blockchainServices.getTransactions();
             if (request.status === 200) {
                 setTransactions(request.data.transactions);
+            } else {
+                dispatch(setNotLoggedIn());
+                history.push("/login");
+                history.go(0);
             }
         })();
     }, []);
