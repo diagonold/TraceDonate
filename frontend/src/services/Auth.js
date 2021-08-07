@@ -31,6 +31,7 @@ export default class Auth {
     async logout() {
         try {
             LocalStorageUtil.remove("token");
+            LocalStorageUtil.remove("TraceDonateUsername");
             return true;
         } catch(err) {
             return false;

@@ -8,7 +8,7 @@ export default class Blockchain {
 
     async getProjects() {
         try {
-            const response = await AxiosInstance.get("/api/organizations", {
+            const response = await AxiosInstance.get("/api/projects", {
                 headers: {
                     "Authorization": `Bearer ${this.token}`
                 }

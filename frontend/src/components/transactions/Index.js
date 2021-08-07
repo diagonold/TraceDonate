@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Pagination from 'react-js-pagination';
 import Transaction from './Transaction';
 
+import BlockchainServices from '../../services/Blockchain';
+
+const blockchainServices = new BlockchainServices();
+
 export default function Index() {
+
+    useEffect(() => {
+        (async () => {
+            const request = await blockchainServices.getTransactions();
+            if (request.status === 200) {
+                setTransactions(request.data.transactions);
+            }
+        })();
+    }, []);
 
     const [activePage, setActivePage] = useState(1);
     const [itemPerPage, setItemPerPage] = useState(3);
@@ -36,7 +49,7 @@ export default function Index() {
                 />
             </div>
             { allTransactions.map((transaction, key) => {
-                return <Transaction key={key} />
+                return <Transaction transaction={transaction} key={key} />
             }) }
         </>
     );

@@ -29,9 +29,11 @@ export default function SignIn() {
 	const onSubmitLogin = async (payload) => {
 		try {
 			const response = await authServices.login(payload);
-			if (response.status === 201) {
+			if (response.status === 200) {
 				const token = response.data.token;
+				const username = response.data.username;
 				LocalStorageutil.create("token", token);
+				LocalStorageutil.create("TraceDonateUsername", username);
 				dispatch(setLoggedIn());
 				history.push("/");
 				history.go(0);
