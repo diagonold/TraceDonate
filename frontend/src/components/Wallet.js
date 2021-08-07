@@ -54,7 +54,7 @@ export default function Wallet() {
           style={customStyles}
           contentLabel="My Wallet"
         >
-            <h2>Hello, {LocalStorage.read("TraceDonateUsername") ? LocalStorage.read("TraceDonateUsername") : "User"}</h2>
+            <h2 className="text-center">Hello, {LocalStorage.read("TraceDonateUsername") ? LocalStorage.read("TraceDonateUsername") : "User"}</h2>
             <p>Address: {walletDetail.wallet}</p>
             <p>Balance: {walletDetail.balance}</p>
         </Modal>

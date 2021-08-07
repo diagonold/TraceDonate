@@ -14,7 +14,7 @@ export default function Project({ project }) {
      } = project;
 
     return (
-        <div className="container-md border-1 text-start">
+        <div className="container-md my-3 p-4 border border-1 text-start">
             <h1>Organization</h1>
             <p>xxx</p>
             <p>xxx</p>
