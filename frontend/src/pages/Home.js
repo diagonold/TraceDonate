@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import BlockchainServices from '../services/Blockchain';
 import LocalStorageUtil from '../utils/LocalStorage';
 
-import OrganizationIndex from '../components/organizations/Index';
+import ProjectIndex from '../components/projects/Index';
 import TransactionIndex from '../components/transactions/Index';
 import Wallet from '../components/Wallet';
 
@@ -27,7 +27,7 @@ export default function Home() {
 			if (token) {
 				const blockchainServices = new BlockchainServices();
 				try {
-					const response = await blockchainServices.getOrganizations();
+					const response = await blockchainServices.getProjects();
 					if (response.status === 200) {
 						dispatch(setLoggedIn());
 						console.log("Active session");
@@ -51,7 +51,7 @@ export default function Home() {
 			<Wallet />
 		)}
 		{ page === 1 && (
-			<OrganizationIndex />
+			<ProjectIndex />
 		)}
 		{ page === 2 && (
 			<TransactionIndex />

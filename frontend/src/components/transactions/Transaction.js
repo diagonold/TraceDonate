@@ -1,14 +1,19 @@
 import React from 'react';
 
-export default function Transaction(props) {
+export default function Transaction({ transaction }) {
 
-    const { from, to, amount, ts } = props;
+    const { from, 
+        to, 
+        amount, 
+        ts 
+    } = transaction;
     
     return (
         <div className="container-md border-1 text-start">
-            <h1>Transaction</h1>
-            <p>xxx</p>
-            <p>xxx</p>
+            <p>From: {from}</p>
+            <p>To: {to}</p>
+            <p>Amount: {amount}</p>
+            <p>{ts}</p>
         </div>
     );
 }

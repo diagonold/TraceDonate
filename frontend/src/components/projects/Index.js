@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Pagination from 'react-js-pagination';
-import Organization from './Organization';
+import Project from './Project';
+
+import BlockchainServices from '../../services/Blockchain';
+
+const blockchainServices = new BlockchainServices();
 
 export default function Index() {
+
+    useEffect(() => {
+        (async () => {
+            const response = await blockchainServices.getProjects();
+            if (response.status === 200) {
+                setProjects(response.data.projects);
+            }
+        })();
+    }, []);
 
     const [activePage, setActivePage] = useState(1);
     const [itemPerPage, setItemPerPage] = useState(3);
 
-	const [ organizations, setOrganizations ] = useState(new Array(3).fill(0));
+	const [ projects, setProjects ] = useState([]);
 
     const handlePageChange = (pageNumber) => {
         setActivePage(pageNumber);
@@ -15,12 +28,12 @@ export default function Index() {
 
     let end = itemPerPage * activePage;
     let start = end - (itemPerPage - 1);
-    let allOrganizations = [];
-    if (end > organizations.length) {
-        end = (end- itemPerPage) + (itemPerPage - (end - organizations.length));
+    let allProjects = [];
+    if (end > projects.length) {
+        end = (end- itemPerPage) + (itemPerPage - (end - projects.length));
     }
     for (let i = start - 1; i < end; i++) {
-        allOrganizations.push(organizations[i]);
+        allProjects.push(projects[i]);
     }
     
     return (
@@ -29,14 +42,14 @@ export default function Index() {
                 <Pagination
                     activePage={activePage}
                     itemsCountPerPage={itemPerPage}
-                    totalItemsCount={organizations.length}
+                    totalItemsCount={projects.length}
                     pageRangeDisplayed={5}
                     linkClass="page-link"
                     onChange={handlePageChange}     
                 />
             </div>
-            { allOrganizations.map((organization, key) => {
-                return <Organization key={key} />
+            { allProjects.map((project, key) => {
+                return <Project project={project} key={key} />
             }) }
         </>
     );

@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setWalletModalClosed } from '../redux/reducers/walletModalReducer';
 import Modal from 'react-modal';
 import LocalStorage from '../utils/LocalStorage';
+
+import BlockchainServices from '../services/Blockchain';
+
+const blockchainServices = new BlockchainServices();
 
 const customStyles = {
     content: {
@@ -19,12 +23,29 @@ Modal.setAppElement('#root');
 
 export default function Wallet() {
 
-    const dispatch = useDispatch();
-    const modal = useSelector((state) => state.walletModal.value);
+  useEffect(() => {
+    (async () => {
+      const response = await blockchainServices.getWallet();
+      if (response.status === 200) {
+        setWalletDetail({
+          wallet: response.data.wallet,
+          balance: response.data.balance 
+        });
+      }
+    })();
+  }, []);
+
+  const [ walletDetail, setWalletDetail ] = useState({
+    "wallet": "",
+    "balance": 0
+  });
+
+  const dispatch = useDispatch();
+  const modal = useSelector((state) => state.walletModal.value);
   
-    function closeModal() {
-      dispatch(setWalletModalClosed());
-    }
+  const closeModal = () => {
+    dispatch(setWalletModalClosed());
+  }
   
     return (
         <Modal
@@ -34,8 +55,8 @@ export default function Wallet() {
           contentLabel="My Wallet"
         >
             <h2>Hello, {LocalStorage.read("TraceDonateUsername") ? LocalStorage.read("TraceDonateUsername") : "User"}</h2>
-            <p>Address</p>
-            <p>amount</p>
+            <p>Address: {walletDetail.wallet}</p>
+            <p>Balance: {walletDetail.balance}</p>
         </Modal>
     );
 }
