@@ -8,7 +8,7 @@ export default class Auth {
 
     async login(payload) {
         try {
-            const response = await AxiosInstance.post("/login/", payload);
+            const response = await AxiosInstance.post("/api/login/", payload);
             return response;
         } catch(err) {
             console.log(err);
@@ -17,7 +17,7 @@ export default class Auth {
 
     async register(payload) {
         try {
-            const response = await AxiosInstance.post("/register/", payload, {
+            const response = await AxiosInstance.post("/api/register/", payload, {
                 headers: {
                     "Authorization": `Bearer ${this.token}`
                 }
