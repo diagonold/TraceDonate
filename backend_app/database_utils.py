@@ -17,13 +17,13 @@ def user_exist(username):
         return len(res) == 1
 
 
-def create_user(username, password, wallet):
+def create_user(username, password, wallet, private_key):
     with sqlite3.connect(DB_FILE) as con:
         cur = con.cursor()
         cur.execute("""
-                    INSERT INTO "user" (username, password, wallet)
-                    VALUES(?,?,?)""",
-                    (username, password, wallet))
+                    INSERT INTO "user" (username, password, wallet, private_key)
+                    VALUES(?,?,?,?)""",
+                    (username, password, wallet, private_key))
         res = cur.fetchall()
 
 
