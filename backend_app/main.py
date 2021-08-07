@@ -76,7 +76,7 @@ def wallets(credentials: HTTPAuthorizationCredentials = Security(security)):
     if auth_handler.decode_token(token):
         user_name = auth_handler.decode_token(token).strip()
         print(user_name)
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        return JSONResponse(status_code=status.HTTP_200_OK,
                             content={"wallet": "FAKE_0xc39Bba04F774b825bE5060bf28645CD82AC29bA4", "balance": "100"})
 
 
@@ -86,7 +86,7 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
     if auth_handler.decode_token(token):
         user_name = auth_handler.decode_token(token).strip()
         print(user_name)
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        return JSONResponse(status_code=status.HTTP_200_OK,
                             content={"transactions": [
                                 {"from": "FAKE_0xc39Bba04F774b825bE5060bf28645CD82AC29bA4",
                                  "to": "FAKE_0xa415Ae493283ac8e898dbD8D610D9C7453509B7F",
