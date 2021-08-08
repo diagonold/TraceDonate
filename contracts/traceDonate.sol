@@ -112,6 +112,21 @@ contract Project{
         thisRequest.completed = true;
         emit PaymentMade( msg.sender, thisRequest.recipient, thisRequest.value );
     }
+
+    function get_summary() public view returns ( 
+        address _owner, 
+        string memory _description,
+        uint _minDonation,
+        uint _raisedDonation,
+        uint _goal,
+        uint _numberOfDonors ){
+        _owner = owner;
+        _description = description;
+        _minDonation = minDonation;
+        _raisedDonation = raisedDonation;
+        _goal = goal;
+        _numberOfDonors = numberOfDonors;
+    }
     
 }
 
