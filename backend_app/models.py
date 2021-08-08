@@ -7,16 +7,13 @@ class CredentialsForm(BaseModel):
 
 
 class SendPaymentForm(BaseModel):
-    receiver_id: int
+    receiver_wallet: str
     amount: float
 
 
-class TopUpForm(BaseModel):
-    amount: float
+class VoteForm(BaseModel):
+    project_address: str
+    request_id: int
 
 
-class RatingForm(BaseModel):
-    user_id: int
-    score: int
-    comment: str
 

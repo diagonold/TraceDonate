@@ -1,5 +1,5 @@
 import uvicorn
-import random, string
+import random, string, uuid
 
 from fastapi import FastAPI, status, Security
 from fastapi.responses import JSONResponse
@@ -76,6 +76,7 @@ def wallets(credentials: HTTPAuthorizationCredentials = Security(security)):
     if auth_handler.decode_token(token):
         user_name = auth_handler.decode_token(token).strip()
         print(user_name)
+
         return JSONResponse(status_code=status.HTTP_200_OK,
                             content={"wallet": "FAKE_0xc39Bba04F774b825bE5060bf28645CD82AC29bA4", "balance": "100"})
 
@@ -86,17 +87,16 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
     if auth_handler.decode_token(token):
         user_name = auth_handler.decode_token(token).strip()
         print(user_name)
+        # TODO: use web3 to get transactions of this account.
+        transactions_ls = []
+        for i in range(10):
+            transactions_ls.append({"from": "FAKE_0x%s" % uuid.uuid4().hex,
+                                    "to": "FAKE_0x%s" % uuid.uuid4().hex,
+                                    "amount": "100",
+                                    "ts": "1628%s302" % random.randint(100, 999)})
+
         return JSONResponse(status_code=status.HTTP_200_OK,
-                            content={"transactions": [
-                                {"from": "FAKE_0xc39Bba04F774b825bE5060bf28645CD82AC29bA4",
-                                 "to": "FAKE_0xa415Ae493283ac8e898dbD8D610D9C7453509B7F",
-                                 "amount": "100",
-                                 "ts": "1628323302"},
-                                {"from": "FAKE_0xc39Bba04F774b825bE5060bf28645CD82AC29bA4",
-                                 "to": "FAKE_0xa415Ae493283ac8e898dbD8D610D9C7453509B7F",
-                                 "amount": "100",
-                                 "ts": "1628323102"}
-                            ]})
+                            content={"transactions": transactions_ls})
 
 
 @app.get("/api/projects", status_code=200)
@@ -113,67 +113,49 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
     if auth_handler.decode_token(token):
         user_name = auth_handler.decode_token(token).strip()
         print(user_name)
-        project1 = {
-            'owner': 'owner1',
-            'description': 'description',
+        projects_ls = []
+        for i in range(10):
+            projects_ls.append({
+            'owner': 'owner-%s' % i,
+            'description': 'description-%s' % i,
             'minDonation': '10',
             'raisedDonation': '500',
             'goal': '1000',
             'numberOfDonors': '5',
             'donations': {'addy1': '100', 'addy2': '200', 'addy3': '100', 'addy4': '50', 'addy5': '50'},
             'requests': [
-                {'requestDescription': 'requestDescription1',
+                {'requestDescription': 'requestDescription-1',
                  'value': '100',
-                 'recipient': '0x26da4B386394223A0272e7418A7c8A4b28a05a3f',
+                 'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
                  'completed': True,
                  'index': '1'
                  },
-                {'requestDescription': 'requestDescription2',
+                {'requestDescription': 'requestDescription-22',
                  'value': '50',
-                 'recipient': '0xf33E77a3E61d5Ed6C9BBb32305aa75765460BDaE',
-                 'completed': True,
+                 'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
+                 'completed': False,
                  'index': '0'
                  }
             ]
-        }
+        })
 
-        project2 = {
-            'owner': 'owner2',
-            'description': 'description2',
-            'minDonation': '10',
-            'raisedDonation': '50',
-            'goal': '1000',
-            'numberOfDonors': '2',
-            'donations': {'addy1': '100', 'addy2': '200', 'addy3': '100', 'addy4': '50', 'addy5': '50'},
-            'requests': [
-                {'requestDescription': 'requestDescription1',
-                 'value': '100',
-                 'recipient': '0x26da4B386394223A0272e7418A7c8A4b28a05a3f',
-                 'completed': True,
-                 'index': '1'
-                 },
-                {'requestDescription': 'requestDescription2',
-                 'value': '50',
-                 'recipient': '0xf33E77a3E61d5Ed6C9BBb32305aa75765460BDaE',
-                 'completed': True,
-                 'index': '0'
-                 }
-            ]
-        }
-        return JSONResponse(status_code=status.HTTP_200_OK, content={"projects": [project1, project2]})
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"projects": projects_ls})
 
 
 @app.post("/api/send", status_code=201)
-def send(credentials: HTTPAuthorizationCredentials = Security(security)):
+def send(send_payment_form: SendPaymentForm, credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
+        print(send_payment_form)
+        print('Send %s to %s' % (send_payment_form.amount, send_payment_form.receiver_wallet))
         return {"msg": "authorized send"}
 
 
 @app.post("/api/vote", status_code=201)
-def vote(credentials: HTTPAuthorizationCredentials = Security(security)):
+def vote(vote_form: VoteForm, credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
+        print('Vote project %s request %s ' % (vote_form.project_address, vote_form.request_id))
         return {"msg": "authorized rate"}
 
 
