@@ -14,6 +14,8 @@ const customStyles = {
       bottom: 'auto',
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
+      borderWidth: "5px",
+      fontFamily: 'Lucida Grande'
     },
   };
 
@@ -53,9 +55,12 @@ export default function Wallet() {
           style={customStyles}
           contentLabel="My Wallet"
         >
-            <h2 className="text-center">Hello, {LocalStorageUtil.read("TraceDonateUsername") ? LocalStorageUtil.read("TraceDonateUsername") : "User"}</h2>
+          <div className="container-md">
+            <h3 className="text-center">Hello, {LocalStorageUtil.read("TraceDonateUsername") ? LocalStorageUtil.read("TraceDonateUsername") : "User"}</h3>
+            <hr/>
             <p>Address: {walletDetail.wallet}</p>
             <p>Balance: {walletDetail.balance}</p>
+          </div>
         </Modal>
     );
 }

@@ -8,6 +8,7 @@ import LocalStorageUtil from '../utils/LocalStorage';
 import ProjectIndex from '../components/projects/Index';
 import TransactionIndex from '../components/transactions/Index';
 import Wallet from '../components/Wallet';
+import ProjectDetails from '../components/projects/ProjectDetails';
 
 export default function Home() {
 
@@ -20,6 +21,8 @@ export default function Home() {
 	const page = useSelector((state) => state.page.value);
 
 	const wallet = useSelector((state) => state.walletModal.value);
+
+	const projectDetails = useSelector((state) => state.projectModal.opened);
 
 	useEffect(() => {
 		(async () => {
@@ -50,6 +53,9 @@ export default function Home() {
 		<>
 		{ wallet && (
 			<Wallet />
+		)}
+		{ projectDetails && (
+			<ProjectDetails />
 		)}
 		{ page === 1 && (
 			<ProjectIndex />

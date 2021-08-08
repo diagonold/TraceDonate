@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function WelcomeTitles() {
     return (
-        <>
-            <h1>TraceDonate</h1>
-            <h3>You know what it is about</h3>
-        </>
+        <div className="container-fluid pt-4 pb-2 bg-dark">
+            <h1 className="text-light">TraceDonate</h1>
+            <p className="text-light"><em>--- Donate The Right Way ---</em></p>
+        </div>
     );
 }
