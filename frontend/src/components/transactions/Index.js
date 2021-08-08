@@ -15,12 +15,14 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
-            const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"));
+            const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
             const response = await blockchainServices.getTransactions();
             if (response && response.status === 200) {
                 setTransactions(response.data.transactions);
             } else {
                 dispatch(setNotLoggedIn());
+                LocalStorageUtil.remove("token");
+                LocalStorageUtil.remove("TraceDonateUsername");
                 history.push("/login");
                 history.go(0);
             }
@@ -28,7 +30,7 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(3);
+    const [itemPerPage, setItemPerPage] = useState(4);
 
 	const [ transactions, setTransactions ] = useState(new Array(3).fill(0));
     
@@ -58,9 +60,11 @@ export default function Index() {
                     onChange={handlePageChange}     
                 />
             </div>
+            <div className="transaction-layout">
             { allTransactions.map((transaction, key) => {
                 return <Transaction transaction={transaction} key={key} />
             }) }
+            </div>
         </>
     );
 }

@@ -1,4 +1,4 @@
-.transaction-layout {
+.project-layout {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     padding-left: 3%;
@@ -7,11 +7,11 @@
 }
 
 @media only screen and (max-width: 767px) {
-    .transaction-layout {
+    .project-layout {
         display: block;
     }
 }
 
-.transaction-card-text {
+.project-card-text {
     word-wrap: break-word;
 }

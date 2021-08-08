@@ -21,8 +21,9 @@ export default function Transaction({ transaction }) {
     } = new DateTimeUtil(ts).unixTimeStampParser();
     
     return (
-        <div className="container-md my-3 p-4 border border-2 text-start transaction-card-text">
+        <div className="container-fluid my-3 p-4 border border-4 text-start transaction-card-text">
             <p>To: {to}</p>
+            <hr/>
             <p>Amount: {amount}</p>
             <p>{year}-{month}-{day} {hours}:{minutes}:{seconds}</p>
         </div>

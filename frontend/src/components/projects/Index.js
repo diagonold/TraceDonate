@@ -8,6 +8,8 @@ import Project from './Project';
 import BlockchainServices from '../../services/Blockchain';
 import LocalStorageUtil from '../../utils/LocalStorage';
 
+import '../../styles/blockchain/project.css';
+
 export default function Index() {
 
     const dispatch = useDispatch();
@@ -15,12 +17,14 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
-            const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"));
+            const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
             const response = await blockchainServices.getProjects();
             if (response && response.status === 200) {
                 setProjects(response.data.projects);
             } else {
                 dispatch(setNotLoggedIn());
+                LocalStorageUtil.remove("token");
+                LocalStorageUtil.remove("TraceDonateUsername");
                 history.push("/login");
                 history.go(0);
             }
@@ -28,7 +32,7 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(3);
+    const [itemPerPage, setItemPerPage] = useState(4);
 
 	const [ projects, setProjects ] = useState([]);
 
@@ -58,9 +62,11 @@ export default function Index() {
                     onChange={handlePageChange}     
                 />
             </div>
-            { allProjects.map((project, key) => {
-                return <Project project={project} key={key} />
-            }) }
+            <div className="project-layout">
+                { allProjects.map((project, key) => {
+                    return <Project project={project} key={key} />
+                }) }
+            </div>
         </>
     );
 }

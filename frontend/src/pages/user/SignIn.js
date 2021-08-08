@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setLoggedIn } from '../../redux/reducers/loggedInReducer';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import AuthServices from '../../services/Auth';
 import LocalStorageutil from '../../utils/LocalStorage';
 
@@ -44,21 +44,27 @@ export default function SignIn() {
 	}
 
     return (
-    	<div class="container-fluid mt-5">
-			<WelcomeTitles />
+		<>
+		<WelcomeTitles />
+    	<div class="container-fluid mt-4">
         	<form onSubmit={handleSubmit(onSubmitLogin)}>
 				<div className="form-group">
 					<label className="text-dark">Username: </label>
+					<br/>
 					<input type="text" {...register("username")} />
                     <div className="error text-danger">{errors.username?.message}</div>
 				</div>
+				<br/>
 				<div className="form-group">
 					<label className="text-dark">Password: </label>
+					<br/>
 					<input type="password" {...register("password")} />
 					<div className="error text-danger">{errors.password?.message}</div>
 				</div>
-				<input className="btn btn-primary" type="submit" value="Sign In" />
+				<p>Don't have an account yet? <Link to="/register" style={{textDecoration: "none"}}>Sign up</Link> here!</p>
+				<input className="btn btn-secondary" type="submit" value="Sign In" />
         	</form>
         </div>
+		</>
     );
 }

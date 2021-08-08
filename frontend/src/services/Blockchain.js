@@ -1,8 +1,9 @@
 import AxiosInstance from './AxiosFactory';
 
 export default class Blockchain {
-    constructor(token) {
+    constructor(token, history) {
         this.token = token;
+        this.history = history;
     }
 
     async getProjects() {
@@ -15,6 +16,8 @@ export default class Blockchain {
             return response;
         } catch(err) {
             console.log(err);
+            this.history.push("/login");
+            this.history.go(0);
         }
     }
 
@@ -28,6 +31,8 @@ export default class Blockchain {
             return response;
         } catch(err) {
             console.log(err);
+            this.history.push("/login");
+            this.history.go(0);
         }
     }
 
@@ -41,6 +46,8 @@ export default class Blockchain {
             return response;
         } catch(err) {
             console.log(err);
+            this.history.push("/login");
+            this.history.go(0);
         }
     }
 }
