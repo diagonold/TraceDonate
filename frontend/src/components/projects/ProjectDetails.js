@@ -12,7 +12,6 @@ const customStyles = {
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
       maxHeight: "50%",
-      width: "50%",
       fontFamily: 'Lucida Grande',
       borderWidth: "5px"
     },
