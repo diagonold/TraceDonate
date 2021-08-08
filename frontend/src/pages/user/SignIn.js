@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { setLoggedIn } from '../../redux/reducers/loggedInReducer';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useHistory } from 'react-router-dom';
@@ -20,15 +22,21 @@ export default function SignIn() {
 		}, handleSubmit
 	} = useForm({resolver: yupResolver(signInSchema) });
 
+	const dispatch = useDispatch();
+
 	const history = useHistory();
 
 	const onSubmitLogin = async (payload) => {
 		try {
 			const response = await authServices.login(payload);
-			if (response.status === 201) {
+			if (response.status === 200) {
 				const token = response.data.token;
+				const username = response.data.username;
 				LocalStorageutil.create("token", token);
+				LocalStorageutil.create("TraceDonateUsername", username);
+				dispatch(setLoggedIn());
 				history.push("/");
+				history.go(0);
 			}
 		} catch(err) {
 			alert("Error signning in");
