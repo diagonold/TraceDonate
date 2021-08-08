@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setWalletModalClosed } from '../redux/reducers/walletModalReducer';
 import Modal from 'react-modal';
-import LocalStorage from '../utils/LocalStorage';
+import LocalStorageUtil from '../utils/LocalStorage';
 
 import BlockchainServices from '../services/Blockchain';
-
-const blockchainServices = new BlockchainServices();
 
 const customStyles = {
     content: {
@@ -25,6 +23,7 @@ export default function Wallet() {
 
   useEffect(() => {
     (async () => {
+      const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"));
       const response = await blockchainServices.getWallet();
       if (response.status === 200) {
         setWalletDetail({
@@ -54,7 +53,7 @@ export default function Wallet() {
           style={customStyles}
           contentLabel="My Wallet"
         >
-            <h2 className="text-center">Hello, {LocalStorage.read("TraceDonateUsername") ? LocalStorage.read("TraceDonateUsername") : "User"}</h2>
+            <h2 className="text-center">Hello, {LocalStorageUtil.read("TraceDonateUsername") ? LocalStorageUtil.read("TraceDonateUsername") : "User"}</h2>
             <p>Address: {walletDetail.wallet}</p>
             <p>Balance: {walletDetail.balance}</p>
         </Modal>

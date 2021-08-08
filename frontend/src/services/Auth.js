@@ -2,9 +2,7 @@ import AxiosInstance from './AxiosFactory';
 import LocalStorageUtil from '../utils/LocalStorage';
 
 export default class Auth {
-    constructor() {
-        this.token = LocalStorageUtil.read("token");
-    }
+    constructor() {};
 
     async login(payload) {
         try {
@@ -17,11 +15,7 @@ export default class Auth {
 
     async register(payload) {
         try {
-            const response = await AxiosInstance.post("/api/register/", payload, {
-                headers: {
-                    "Authorization": `Bearer ${this.token}`
-                }
-            });
+            const response = await AxiosInstance.post("/api/register/", payload);
             return response;
         } catch(err) {
             console.log(err);

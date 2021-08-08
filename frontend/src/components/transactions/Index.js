@@ -6,8 +6,7 @@ import Pagination from 'react-js-pagination';
 import Transaction from './Transaction';
 
 import BlockchainServices from '../../services/Blockchain';
-
-const blockchainServices = new BlockchainServices();
+import LocalStorageUtil from '../../utils/LocalStorage';
 
 export default function Index() {
 
@@ -16,9 +15,10 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
-            const request = await blockchainServices.getTransactions();
-            if (request.status === 200) {
-                setTransactions(request.data.transactions);
+            const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"));
+            const response = await blockchainServices.getTransactions();
+            if (response && response.status === 200) {
+                setTransactions(response.data.transactions);
             } else {
                 dispatch(setNotLoggedIn());
                 history.push("/login");
