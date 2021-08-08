@@ -11,7 +11,6 @@
 
 ## Truffle and metamask
 
-
 ## Ganache
 - Ganache gives us environment for local blockchain with using truffle commands we can communicate with ganache.
 - Install from here https://www.trufflesuite.com/ganache
@@ -32,9 +31,13 @@
 
 ## Migrations
 
+-  Need to deploy to ganache network for testing
 - Migrations are JavaScript files that help you deploy contracts to the Ethereum network. 
+- truffle deploy and migrate does the same thing. its just alais
 - These files are located in migrations folder
-- To run migration run `truffle migrate`
+- To run migration run `truffle migrate --reset`
+
+
 
 ## Interacting with your smart contracts
 - When testing your code, it is best to interact with smart contract using remix
@@ -53,18 +56,16 @@
     - let instance = await ProjectHub.deployed()
   2. Execute contract funcitons like:
     - instance.get_projects()
+  3. Interact with a contract at a specific address
+    - let specificInstance = await Project.at("0x1234...");
+  - Here is a link on how to interact with smart contractshttps://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts
 
 
-## Interacting with smart contracts on the browser with truffle and metamask
+## Interacting with smart contracts on the browser with truffle
 - Before you can interact with smart contracts in a browser, make sure they're compiled, deployed, and that you're interacting with them via web3 in client-side JavaScript. 
 - Once the above task is done, MetaMask is the easiest way to interact with dapps in a browser.
 - Not too sure on how we will use this yet. 
 
 
 
-
-
-
-
-
-
+S
