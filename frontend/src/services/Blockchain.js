@@ -1,9 +1,8 @@
 import AxiosInstance from './AxiosFactory';
-import LocalStorageUtil from '../utils/LocalStorage';
 
 export default class Blockchain {
-    constructor() {
-        this.token = LocalStorageUtil.read("token");
+    constructor(token) {
+        this.token = token;
     }
 
     async getProjects() {

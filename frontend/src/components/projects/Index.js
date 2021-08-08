@@ -6,8 +6,7 @@ import Pagination from 'react-js-pagination';
 import Project from './Project';
 
 import BlockchainServices from '../../services/Blockchain';
-
-const blockchainServices = new BlockchainServices();
+import LocalStorageUtil from '../../utils/LocalStorage';
 
 export default function Index() {
 
@@ -16,8 +15,9 @@ export default function Index() {
 
     useEffect(() => {
         (async () => {
+            const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"));
             const response = await blockchainServices.getProjects();
-            if (response.status === 200) {
+            if (response && response.status === 200) {
                 setProjects(response.data.projects);
             } else {
                 dispatch(setNotLoggedIn());

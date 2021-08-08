@@ -24,14 +24,14 @@ export default function Home() {
 	useEffect(() => {
 		(async () => {
 			const token = LocalStorageUtil.read("token");
-			if (token) {
-				const blockchainServices = new BlockchainServices();
+			if (typeof token === "string") {
+				const blockchainServices = new BlockchainServices(token);
 				try {
 					const response = await blockchainServices.getProjects();
 					if (response.status === 200) {
 						dispatch(setLoggedIn());
 						console.log("Active session");
-					}
+					} 
 				} catch(err) {
 					dispatch(setNotLoggedIn());
 					console.log("No active session");
@@ -41,6 +41,7 @@ export default function Home() {
 				} 
 			} else {
 				history.push("/login");
+				history.go(0);
 			}
 		})();
 	}, []);
