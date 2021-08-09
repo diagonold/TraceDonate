@@ -7,7 +7,7 @@ import { setDonationThankYouModalOpened } from '../../redux/reducers/donationTha
 import BlockchainServices from '../../services/Blockchain';
 import LocalStorageUtil from '../../utils/LocalStorage';
 
-export default function Project({ project, key }) {
+export default function Project({ project }) {
 
     const {
         owner,
@@ -28,7 +28,7 @@ export default function Project({ project, key }) {
      const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(false);
 
      const donateToProject = async () => {
-         const donationAmount = parseInt(document.getElementById(`donationAmount${key}`).value);
+         const donationAmount = parseInt(document.getElementById(`donationAmount_${owner}`).value);
          if (isNaN(donationAmount)) return;
          const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
          const response = await blockchainServices.donate({
@@ -62,7 +62,7 @@ export default function Project({ project, key }) {
             <p>{numberOfDonors} Donor(s)</p>
             </div>
             <div className="container-sm d-flex justify-content-end">
-                <input type="number" id={`donationAmount${key}`} value={currentDonationAmount} onChange={(e) => {
+                <input type="number" id={`donationAmount_${owner}`} value={currentDonationAmount} onChange={(e) => {
                     setCurrentDonationAmount(e.target.value);
                     if (parseInt(currentDonationAmount) > 0) {
                         setNonEmptyDonationAmount(true);
