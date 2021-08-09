@@ -16,7 +16,7 @@ export default function NavBar() {
     const history = useHistory();
 
     return (
-        <div className="navbar navbar-expand-lg navbar-light bg-dark">
+        <div className="navbar navbar-expand-lg navbar-light bg-dark bg-gradient">
             <div className="container-md">
             <a class="navbar-brand fs-2 text-light" href="#" onClick={() => history.go(0)}>TraceDonate</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

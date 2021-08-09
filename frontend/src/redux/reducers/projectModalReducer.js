@@ -6,7 +6,8 @@ const projectModalSlice = createSlice({
         opened: false,
         data: {
             donations: {},
-            requests: []
+            requests: [],
+            project_address: ""
         }
     },
     reducers: {

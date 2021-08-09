@@ -19,14 +19,16 @@ export default function Project({ project }) {
 
     return (
         <div 
-            className="container-md my-3 p-4 border border-4 text-start project-card-text" 
+            className="container-md bg-white bg-gradient my-3 p-4 border border-4 text-start project-card-text" 
             style={{ cursor: "pointer" }}
             onClick={() => dispatch(setProjectModalOpened({
                 "donations": donations,
-                "requests": requests
+                "requests": requests,
+                "project_address": owner
             }))}
         >
-            <h2>{owner}</h2>
+            <p>{owner}</p>
+            <hr/>
             <p>{description}</p>
             <p>Target Doantion: {goal}</p>
             <p>{raisedDonation} / {minDonation}</p>

@@ -129,22 +129,6 @@ contract Project{
         _numberOfDonors = numberOfDonors;
         _numRequests = numRequests;
     }
-
-    // Need to offload the calling of each request to backend
-    // input: index. Range is from 0 to (numRequests - 1)
-    function get_request_details(uint index) public view returns (
-    string memory _requestDescription,
-    uint _value,
-    address _recipient,
-    bool _completed,
-    uint _yesVotes){
-        _requestDescription = requests[index].requestDescription;
-        _value = requests[index].value;
-        _recipient = requests[index].recipient;
-        _completed = requests[index].completed;
-        _yesVotes = requests[index].yesVotes;
-    }
-   
 }
 
 
