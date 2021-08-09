@@ -80,7 +80,7 @@ export default function Index() {
                 <h4>Donation Goal Range: </h4>
                 <br/>
                 <input type="text" id="minDonation" />
-                <p>To</p>
+                <p className="my-3">To</p>
                 <input type="text" id="maxDonation" />
                 <div className="mt-3">
                 <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
