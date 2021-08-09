@@ -11,16 +11,15 @@ contract Project{
     uint public numberOfDonors;
     mapping (address => uint) public donations; // stores the donation of each donor
     uint numRequests;
-    mapping (uint => Request) requests;
+    Request[] public requests;
     
     // For each spending request, need to create a new instance of request
     struct Request {
         string requestDescription;
         uint value;
-        
         address payable recipient; // This is the address that the beneificiary want to send funds to.
         bool completed;
-        uint numberOfVoters;
+        uint yesVotes;
         mapping (address=>bool) voters;
     }
     
@@ -42,11 +41,11 @@ contract Project{
         _;
     }
     
-    constructor( string memory _description, uint _minDonation, uint _goal, address _owner) public {
+    constructor( string memory _description, uint _minDonation, uint _goal) public {
         description = _description;
         minDonation = _minDonation;
         goal = _goal;
-        owner = _owner; // The creator of the project is the owner of the project
+        owner = msg.sender; // The creator of the project is the owner of the project
         numRequests = 0;
     }
     
@@ -74,7 +73,7 @@ contract Project{
         newRequest.requestDescription = _requestDescription;
         newRequest.value = _value;
         newRequest.recipient = _recipient;
-        newRequest.numberOfVoters = 0;
+        newRequest.yesVotes = 0;
         newRequest.completed = false;
         emit CreateRequest( msg.sender, _recipient, _requestDescription, _value);
     }
@@ -93,7 +92,7 @@ contract Project{
         // Counting the vote 
         // We only count positive votes
         thisRequest.voters[msg.sender] = true;
-        thisRequest.numberOfVoters++;
+        thisRequest.yesVotes++;
         emit DonorVote(msg.sender);
     }
     
@@ -106,7 +105,7 @@ contract Project{
         // Cannot allow double payment for the same request
         require(thisRequest.completed == false);
         // Number of voters that approved should be more thatn 50% voters
-        require(thisRequest.numberOfVoters > numberOfDonors /2);
+        require(thisRequest.yesVotes > numberOfDonors /2);
         
         // Performing the transder operation
         thisRequest.recipient.transfer(thisRequest.value);
@@ -115,35 +114,38 @@ contract Project{
     }
 
     function get_summary() public view returns ( 
-        address _owner, 
-        string memory _description,
-        uint _minDonation,
-        uint _raisedDonation,
-        uint _goal,
-        uint _numberOfDonors ){
+    address _owner, 
+    string memory _description,
+    uint _minDonation,
+    uint _raisedDonation,
+    uint _goal,
+    uint _numberOfDonors,
+    uint _numRequests ){
         _owner = owner;
         _description = description;
         _minDonation = minDonation;
         _raisedDonation = raisedDonation;
         _goal = goal;
         _numberOfDonors = numberOfDonors;
+        _numRequests = numRequests;
     }
 }
 
 
 contract ProjectHub {
-// Similar to a zombie factory
+// Similar to a factory pattern
     
     // state variables
     Project[] public projects;
     
     event ProjectCreated(address projectAddress, string description, uint minDonation, uint goal);
     
-    function create_project(string memory _description, uint _minDonation, uint _goal ) public payable {
+    function create_project(string memory _description, uint _minDonation, uint _goal ) public payable returns (address _projectAddress) {
     // Create a new project, need to provide all the necessary attributes for that project
-        Project project = new Project(_description, _minDonation, _goal, msg.sender);
+        Project project = new Project(_description, _minDonation, _goal);
         projects.push(project);
         emit ProjectCreated( address(project), _description, _minDonation, _goal);
+        _projectAddress = address(project);
     }
     
     function get_projects() public view returns (Project[] memory){
