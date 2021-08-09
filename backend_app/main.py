@@ -177,11 +177,24 @@ def vote(vote_form: VoteForm, credentials: HTTPAuthorizationCredentials = Securi
 
 
 @app.post("/api/create_project", status_code=201)
-def create_project(create_project_form: CreateProjectForm, credentials: HTTPAuthorizationCredentials = Security(security)):
+def create_project(create_project_form: CreateProjectForm,
+                   credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
         print('Create project %s ' % create_project_form.description)
         return {"msg": 'Create project %s ' % create_project_form.description}
+
+
+@app.post("/api/create_request", status_code=201)
+def create_request(create_request_form: CreateRequestForm,
+                   credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        print('Create request %s for project %s '
+              % (create_request_form.description, create_request_form.project_address))
+
+        return {"msg": 'Create request %s for project %s '
+                       % (create_request_form.description, create_request_form.project_address)}
 
 
 if __name__ == "__main__":

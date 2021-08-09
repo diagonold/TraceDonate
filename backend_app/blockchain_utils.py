@@ -3,6 +3,7 @@ from web3 import Web3
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
+projectHub_address = '0xa875708442458BE3635d4Bc928474a5Ed6Be02Ac'
 
 
 def create_account():
@@ -39,14 +40,13 @@ def get_balance(account_addy):
     return balance_in_ether
 
 
-def read_json(json_path):
+def get_abi_from_json(json_path):
     with open(json_path) as file:
-        return json.load(file)
+        return json.load(file)['abi']
 
 
 def contribute_to(from_addy, from_key, to_addy, amount):
-    contract_json = read_json('../build/contracts/Project.json')
-    abi = contract_json['abi']
+    abi = get_abi_from_json('../build/contracts/Project.json')
     contract = web3.eth.contract(address=to_addy, abi=abi)
     nonce = web3.eth.getTransactionCount(from_addy)
     # TODO check amount <= balance
@@ -62,10 +62,9 @@ def contribute_to(from_addy, from_key, to_addy, amount):
     print(web3.toHex(txn_hash))
 
 
-def create_project(from_addy, from_key, to_addy, project_details):
-    contract_json = read_json('../build/contracts/ProjectHub.json')
-    abi = contract_json['abi']
-    contract = web3.eth.contract(address=to_addy, abi=abi)
+def create_project(from_addy, from_key, project_details):
+    abi = get_abi_from_json('../build/contracts/ProjectHub.json')
+    contract = web3.eth.contract(address=projectHub_address, abi=abi)
     nonce = web3.eth.getTransactionCount(from_addy)
     txn = contract.functions.create_project(project_details, 1, 100).buildTransaction({
         'nonce': nonce
@@ -75,8 +74,39 @@ def create_project(from_addy, from_key, to_addy, project_details):
     print(txn_hash)
 
 
+def get_all_projects():
+    abi = get_abi_from_json('../build/contracts/ProjectHub.json')
+    contract = web3.eth.contract(address=projectHub_address, abi=abi)
+    projects_ls = contract.functions.get_projects().call()
+    return projects_ls
+
+
+def get_project_details(project_addy):
+    abi = get_abi_from_json('../build/contracts/Project.json')
+    contract = web3.eth.contract(address=project_addy, abi=abi)
+    project_details = contract.functions.get_summary().call()
+    return project_details
+
+
+def create_request(owner_addy, owner_key, request_details):
+    abi = get_abi_from_json('../build/contracts/Project.json')
+    contract = web3.eth.contract(address=owner_addy, abi=abi)
+    nonce = web3.eth.getTransactionCount(owner_addy)
+    txn = contract.functions.create_request(request_details, '0xe942dEa825c2B401830F1DfD6994C8849F062954', 100).buildTransaction({
+        'nonce': nonce
+    })
+    signed_txn = web3.eth.account.signTransaction(txn, private_key=owner_key)
+    txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
+    print(txn_hash)
+
+
 if __name__ == '__main__':
     ...
+    wallet = '0xf5767E5cE7Bcf472278213CB7Be6530a557bB76A'
+    key = '9ad1bd96492969aae61c6bae6b7dc3911e02166681dd66ee7524b43b87c3c6bf'
+    print(get_all_projects())
+    create_request(wallet, key, 'create_request_test')
+    print(get_project_details('0x140378E5DCA2F38d165eDc040903Ac031c9Dab75'))
 
     # contribute_to(
     #     '0x7aFAEa96DDaB899748D65dD06b5607e5CeB71876',
@@ -113,7 +143,7 @@ if __name__ == '__main__':
     # wallet = '0x7F963fFc88BE4513404d790206a50a19bf25c667'
     # key = 'd3f8ca75e732d908440ab56b7289edb05dddb70225efc89dee5d83bc94c2b4ec'
     #
-    contract_addy = '0x3B3F14e5FE197A970b14406551fDB22b47E38c41'
+    # contract_addy = '0x3B3F14e5FE197A970b14406551fDB22b47E38c41'
     #
     # # nonce = web3.eth.getTransactionCount(wallet)
     # # tx = {
@@ -128,12 +158,13 @@ if __name__ == '__main__':
     # # tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
     # # print(web3.toHex(tx_hash))
     # # web3.eth.defaultAccount = wallet
-    with open('../build/contracts/Project.json') as f:
-        contract_json = json.load(f)
-        abi = contract_json['abi']
-        byte_code = contract_json['bytecode']
-
-    contract = web3.eth.contract(address=contract_addy, abi=abi)
+    # with open('../build/contracts/Project.json') as f:
+    #     contract_json = json.load(f)
+    #     abi = contract_json['abi']
+    #     byte_code = contract_json['bytecode']
+    #
+    # contract = web3.eth.contract(address=contract_addy, abi=abi)
+    # print(contract.functions.get_summary().call())
 
     # nonce = web3.eth.getTransactionCount(wallet)
     # txn = contract.functions.contribute().buildTransaction({
@@ -150,7 +181,7 @@ if __name__ == '__main__':
     #     {'from': wallet, 'value': web3.toWei(2, 'ether')}
     # )
 
-    print(contract.functions.get_summary().call())
+    # print(contract.functions.get_summary().call())
     #
     # balance = web3.eth.getBalance(contract_addy)
     # print(web3.fromWei(balance, "ether"))

@@ -128,7 +128,6 @@ contract Project{
         _goal = goal;
         _numberOfDonors = numberOfDonors;
     }
-    
 }
 
 
