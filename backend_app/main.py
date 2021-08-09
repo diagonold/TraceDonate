@@ -117,7 +117,7 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
     """
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        user_name = auth_handler.decode_token(token).strip()
+        user_name = auth_handler.decode_token(token)['username'].strip()
         print(user_name)
         projects_ls = []
         for i in range(10):
