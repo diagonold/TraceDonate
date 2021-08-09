@@ -83,11 +83,20 @@ export default function Index() {
     }
     
     return (
-        <>  
-            <div className="container-md my-3 d-flex justify-content-center">
+        <div className="container-md">  
+            <div className="row">
+            <div className="col-3 mt-5 border-end border-4">
+            <div className="container-md my-4 py-3">
+                <div className="mb-3">
                 <button className="btn btn-primary" onClick={() => dispatch(setCreateNewProjectModalOpened())}>Create New Project</button>
+                </div>
+                <div className="mb-3">
+                    <button className="btn btn-primary">Create New Request</button>
+                </div>
             </div>
-            { projectsCopy.length > 0 && (
+            </div>
+            <div className="col">
+            { projectsCopy.length > 0 ?
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
                         activePage={activePage}
@@ -98,22 +107,9 @@ export default function Index() {
                         onChange={handlePageChange}     
                     />
                 </div>
-            )}
-            {/*
-            <div className="container-md">
-                Donation Goal Range: &nbsp;
-                <input type="text" id="minDonation" />
-                &nbsp;
-                To
-                &nbsp;
-                <input type="text" id="maxDonation" />
-                <br/>
-                <br/>
-                <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
-                &nbsp;
-                <button type="button" className="btn btn-light border border-4" onClick={resetProjects}>Reset Filter</button>
-            </div>
-            */}
+                :
+                <div className="my-5"></div>
+            }
             <div className="container-md">
                 <p className="text-start">{projects.length} Projects Available</p>
             </div>
@@ -122,6 +118,8 @@ export default function Index() {
                     return <MyProject project={project} key={key} />
                 }) }
             </div>
-        </>
+            </div>
+            </div>
+        </div>
     );
 }

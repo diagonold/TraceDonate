@@ -56,7 +56,9 @@ export default function CreateNewProject() {
     
     const closeModal = () => {
       dispatch(setCreateNewProjectModalClosed());
-      history.go(0);
+      if (successfullyCreatedNewProject) {
+          history.go(0);
+      }
     }
 
     const NewCreateProjectForm = () => {

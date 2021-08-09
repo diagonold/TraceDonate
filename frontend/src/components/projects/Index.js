@@ -74,8 +74,22 @@ export default function Index() {
     }
     
     return (
-        <>
-            { projectsCopy.length && (
+        <div className="container-md">
+            <div className="row">
+            <div className="col-3 mt-5 border-end border-4">
+                <h4>Donation Goal Range: </h4>
+                <br/>
+                <input type="text" id="minDonation" />
+                <p>To</p>
+                <input type="text" id="maxDonation" />
+                <div className="mt-3">
+                <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
+                &nbsp;
+                <button type="button" className="btn btn-light border border-4" onClick={resetProjects}>Reset Filter</button>
+                </div>
+            </div>
+            <div className="col">
+            { projectsCopy.length > 0 && (
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
                         activePage={activePage}
@@ -88,19 +102,6 @@ export default function Index() {
                 </div>
             )}
             <div className="container-md">
-                Donation Goal Range: &nbsp;
-                <input type="text" id="minDonation" />
-                &nbsp;
-                To
-                &nbsp;
-                <input type="text" id="maxDonation" />
-                <br/>
-                <br/>
-                <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
-                &nbsp;
-                <button type="button" className="btn btn-light border border-4" onClick={resetProjects}>Reset Filter</button>
-            </div>
-            <div className="container-md">
                 <p className="text-start">{projects.length} Projects Available</p>
             </div>
             <div className="container-md">
@@ -108,6 +109,8 @@ export default function Index() {
                     return <Project project={project} key={key} />
                 }) }
             </div>
-        </>
+            </div>
+            </div>
+        </div>
     );
 }
