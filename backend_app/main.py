@@ -191,10 +191,10 @@ def create_request(create_request_form: CreateRequestForm,
     token = credentials.credentials
     if auth_handler.decode_token(token):
         print('Create request %s for project %s '
-              % (create_request_form.description, create_request_form.project_address))
+              % (create_request_form.description, create_request_form.project_addy))
 
         return {"msg": 'Create request %s for project %s '
-                       % (create_request_form.description, create_request_form.project_address)}
+                       % (create_request_form.description, create_request_form.project_addy)}
 
 
 if __name__ == "__main__":

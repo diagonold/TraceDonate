@@ -5,6 +5,7 @@ import WalletModalReducer from './reducers/walletModalReducer';
 import ProjectModalReducer from './reducers/projectModalReducer';
 import DonationThankYouModalReducer from './reducers/donationThankYouModalReducer';
 import CreateNewProjectModalReducer from './reducers/createNewProjectModalReducer';
+import CreateNewRequestModalReducer from './reducers/createNewRequestModalReducer';
 
 export default configureStore({
     reducer: {
@@ -13,6 +14,7 @@ export default configureStore({
         walletModal: WalletModalReducer,
         projectModal: ProjectModalReducer,
         donationThankYouModal: DonationThankYouModalReducer,
-        createNewProjectModal: CreateNewProjectModalReducer
+        createNewProjectModal: CreateNewProjectModalReducer,
+        createNewRequestModal: CreateNewRequestModalReducer
     }
 })
