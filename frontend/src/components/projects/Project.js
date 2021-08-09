@@ -23,7 +23,8 @@ export default function Project({ project }) {
             style={{ cursor: "pointer" }}
             onClick={() => dispatch(setProjectModalOpened({
                 "donations": donations,
-                "requests": requests
+                "requests": requests,
+                "project_address": owner
             }))}
         >
             <p>{owner}</p>
