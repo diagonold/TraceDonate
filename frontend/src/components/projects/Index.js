@@ -32,7 +32,7 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(4);
+    const [itemPerPage, setItemPerPage] = useState(3);
 
 	const [ projects, setProjects ] = useState([]);
 
@@ -62,7 +62,7 @@ export default function Index() {
                     onChange={handlePageChange}     
                 />
             </div>
-            <div className="project-layout">
+            <div className="container-md">
                 { allProjects.map((project, key) => {
                     return <Project project={project} key={key} />
                 }) }

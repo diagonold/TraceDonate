@@ -88,7 +88,7 @@ def wallets(credentials: HTTPAuthorizationCredentials = Security(security)):
 def transactions(credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        user_name = auth_handler.decode_token(token).strip()
+        user_name = auth_handler.decode_token(token)['username'].strip()
         print(user_name)
         # TODO: use web3 to get transactions of this account.
         transactions_ls = []
