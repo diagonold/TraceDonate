@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { setNotLoggedIn } from '../redux/reducers/loggedInReducer';
 import { setWalletModalClosed } from '../redux/reducers/walletModalReducer';
 import Modal from 'react-modal';
 import LocalStorageUtil from '../utils/LocalStorage';
@@ -23,9 +25,11 @@ Modal.setAppElement('#root');
 
 export default function Wallet() {
 
+  const history = useHistory();
+
   useEffect(() => {
     (async () => {
-      const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"));
+      const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
       const response = await blockchainServices.getWallet();
       if (response.status === 200) {
         setWalletDetail({

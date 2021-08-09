@@ -21,6 +21,7 @@ export default function Index() {
             const response = await blockchainServices.getProjects();
             if (response && response.status === 200) {
                 setProjects(response.data.projects);
+                setProjectsCopy(response.data.projects);
             } else {
                 dispatch(setNotLoggedIn());
                 LocalStorageUtil.remove("token");
@@ -35,9 +36,31 @@ export default function Index() {
     const [itemPerPage, setItemPerPage] = useState(3);
 
 	const [ projects, setProjects ] = useState([]);
+    const [ projectsCopy, setProjectsCopy ] = useState([]);
 
     const handlePageChange = (pageNumber) => {
         setActivePage(pageNumber);
+    }
+
+    const filterProjectByDonation = () => {
+        let filteredProject = [];
+        const min = parseInt(document.getElementById("minDonation").value);
+        const max = parseInt(document.getElementById("maxDonation").value);
+
+        if (isNaN(min) || isNaN(max)) {
+            return;
+        }
+
+        for (let project of projectsCopy) {
+            if (project.goal >= min && project.goal <= max) {
+                filteredProject.push(project);
+            }
+        }
+        setProjects(filteredProject);
+    }
+
+    const resetProjects = () => {
+        setProjects(projectsCopy);
     }
 
     let end = itemPerPage * activePage;
@@ -61,6 +84,22 @@ export default function Index() {
                     linkClass="page-link"
                     onChange={handlePageChange}     
                 />
+            </div>
+            <div className="container-md">
+                Donation Amount Range: &nbsp;
+                <input type="text" id="minDonation" />
+                &nbsp;
+                - 
+                &nbsp;
+                <input type="text" id="maxDonation" />
+                <br/>
+                <br/>
+                <button className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
+                &nbsp;
+                <button className="btn btn-light border border-4" onClick={resetProjects}>Reset Filter</button>
+            </div>
+            <div className="container-md">
+                <p className="text-start">{projects.length} Projects Available</p>
             </div>
             <div className="container-md">
                 { allProjects.map((project, key) => {

@@ -39,7 +39,7 @@ export default function ProjectDetails() {
         index
       } = request;
       return (
-          <div className="container-md my-3 p-3 border border-3 text-light overflow-auto" style={{ backgroundColor: completed ? "green" : "red" }}>
+          <div className={`container-md my-3 p-3 border border-3 text-light overflow-auto bg-gradient ${completed ? "bg-success" : "bg-danger"}`}>
               <p>{requestDescription}</p>
               <p>{value}</p>
               <p>{recipient}</p>
