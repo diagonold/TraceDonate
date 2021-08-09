@@ -30,7 +30,7 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(4);
+    const [itemPerPage, setItemPerPage] = useState(3);
 
 	const [ transactions, setTransactions ] = useState(new Array(3).fill(0));
     
@@ -60,7 +60,7 @@ export default function Index() {
                     onChange={handlePageChange}     
                 />
             </div>
-            <div className="transaction-layout">
+            <div className="container-md">
             { allTransactions.map((transaction, key) => {
                 return <Transaction transaction={transaction} key={key} />
             }) }
