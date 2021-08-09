@@ -41,11 +41,11 @@ contract Project{
         _;
     }
     
-    constructor( string memory _description, uint _minDonation, uint _goal) public {
+    constructor( string memory _description, uint _minDonation, uint _goal, address _owner) public {
         description = _description;
         minDonation = _minDonation;
         goal = _goal;
-        owner = msg.sender; // The creator of the project is the owner of the project
+        owner = _owner; // The creator of the project is the owner of the project
         numRequests = 0;
     }
     
@@ -141,7 +141,7 @@ contract ProjectHub {
     
     function create_project(string memory _description, uint _minDonation, uint _goal ) public payable {
     // Create a new project, need to provide all the necessary attributes for that project
-        Project project = new Project(_description, _minDonation, _goal);
+        Project project = new Project(_description, _minDonation, _goal, msg.sender);
         projects.push(project);
         emit ProjectCreated( address(project), _description, _minDonation, _goal);
     }
