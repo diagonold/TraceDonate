@@ -17,6 +17,7 @@ contract Project{
     struct Request {
         string requestDescription;
         uint value;
+        
         address payable recipient; // This is the address that the beneificiary want to send funds to.
         bool completed;
         uint numberOfVoters;
