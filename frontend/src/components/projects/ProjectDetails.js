@@ -9,7 +9,7 @@ import LocalStorageUtil from '../../utils/LocalStorage';
 
 const customStyles = {
     content: {
-      top: '35%',
+      top: '40%',
       left: '50%',
       right: 'auto',
       bottom: 'auto',

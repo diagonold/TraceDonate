@@ -6,9 +6,12 @@ import BlockchainServices from '../services/Blockchain';
 import LocalStorageUtil from '../utils/LocalStorage';
 
 import ProjectIndex from '../components/projects/Index';
+import MyProjectIndex from '../components/projects/my_projects/Index';
 import TransactionIndex from '../components/transactions/Index';
 import Wallet from '../components/Wallet';
 import ProjectDetails from '../components/projects/ProjectDetails';
+import DonationThankYou from '../components/projects/DonationThankYou';
+import CreateNewProject from '../components/projects/my_projects/CreateNewProject';
 
 export default function Home() {
 
@@ -23,6 +26,10 @@ export default function Home() {
 	const wallet = useSelector((state) => state.walletModal.value);
 
 	const projectDetails = useSelector((state) => state.projectModal.opened);
+
+	const donationThankYou = useSelector((state) => state.donationThankYouModal.opened);
+
+	const createNewProject = useSelector((state) => state.createNewProjectModal.value);
 
 	useEffect(() => {
 		(async () => {
@@ -57,11 +64,20 @@ export default function Home() {
 		{ projectDetails && (
 			<ProjectDetails />
 		)}
+		{ donationThankYou && (
+			<DonationThankYou />
+		)}
+		{ createNewProject && (
+			<CreateNewProject />
+		)}
 		{ page === 1 && (
 			<ProjectIndex />
 		)}
 		{ page === 2 && (
 			<TransactionIndex />
+		)}
+		{ page === 3 && (
+			<MyProjectIndex />
 		)}
 		</>
     );
