@@ -11,10 +11,13 @@ const pageSlice = createSlice({
         },
         changeToPage2: (state) => {
             state.value = 2
-        } 
+        },
+        changeToPage3: (state) => {
+            state.value = 3
+        }
     }
 });
 
-export const { changeToPage1, changeToPage2 } = pageSlice.actions;
+export const { changeToPage1, changeToPage2, changeToPage3 } = pageSlice.actions;
 
 export default pageSlice.reducer;
