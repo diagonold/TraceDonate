@@ -10,9 +10,23 @@ import Modal from 'react-modal';
 import BlockchainServices from '../../../services/Blockchain';
 import LocalStorageUtil from '../../../utils/LocalStorage';
 
-const customStyles = {
+const customStylesNormal = {
     content: {
-      top: '40%',
+      top: '43%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      width: "60%",
+      transform: 'translate(-50%, -50%)',
+      borderWidth: "5px",
+      fontFamily: 'Lucida Grande'
+    },
+  };
+
+  const customStylesSuccess = {
+    content: {
+      top: '20%',
       left: '50%',
       right: 'auto',
       bottom: 'auto',
@@ -65,7 +79,7 @@ export default function CreateNewProject() {
         return (
             <div className="my-3 d-flex justify-content-center">
             <form onSubmit={handleSubmit(onSubmitCreateNewProject)} className="container-fluid">
-            <h4 className="text-center">Create New Project</h4>
+            <h4 className="text-center">New Project</h4>
             <hr/>
                 <div className="mb-3 text-start">
                     <label className="text-dark form-label">Description: </label>
@@ -78,11 +92,13 @@ export default function CreateNewProject() {
                     <input type="number" className="form-control" defaultValue={0} {...register("min_donation_amount")} />
                     <div className="error text-danger">{errors.min_donation_amount?.message}</div>
                 </div>
+                <br/>
                 <div className="mb-3 text-start ">
                     <label className="text-dark form-label">Goal: </label>
                     <input type="number" className="form-control" defaultValue={0} {...register("goal")} />
                     <div className="error text-danger">{errors.goal?.message}</div>
                 </div>
+                <br/>
                 <input className="btn btn-secondary" type="submit" value="Create" />
             </form>
             </div>
@@ -93,7 +109,7 @@ export default function CreateNewProject() {
         <Modal
         isOpen={modal}
         onRequestClose={closeModal}
-        style={customStyles}
+        style={successfullyCreatedNewProject ? customStylesSuccess : customStylesNormal}
       >
           { !successfullyCreatedNewProject 
             ?

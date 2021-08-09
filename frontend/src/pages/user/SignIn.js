@@ -46,23 +46,24 @@ export default function SignIn() {
     return (
 		<>
 		<WelcomeTitles />
-    	<div class="container-fluid mt-4">
+    	<div class="container-md mt-4 w-25">
         	<form onSubmit={handleSubmit(onSubmitLogin)}>
-				<div className="form-group">
-					<label className="text-dark">Username: </label>
+				<div className="form-group text-start">
+					<label className="text-dark form-label">Username: </label>
 					<br/>
-					<input type="text" {...register("username")} />
+					<input type="text" className="form-control" {...register("username")} />
                     <div className="error text-danger">{errors.username?.message}</div>
 				</div>
 				<br/>
-				<div className="form-group">
-					<label className="text-dark">Password: </label>
+				<div className="form-group text-start">
+					<label className="text-dark form-label">Password: </label>
 					<br/>
-					<input type="password" {...register("password")} />
+					<input type="password" className="form-control" {...register("password")} />
 					<div className="error text-danger">{errors.password?.message}</div>
 				</div>
-				<p>Don't have an account yet? <Link to="/register" style={{textDecoration: "none"}}>Sign up</Link> here!</p>
-				<input className="btn btn-secondary" type="submit" value="Sign In" />
+				<p className="text-end">Don't have an account yet? <Link to="/register" style={{textDecoration: "none"}}>Sign up</Link> here!</p>
+				<br/>
+				<input className="btn btn-primary" type="submit" value="Sign In" />
         	</form>
         </div>
 		</>

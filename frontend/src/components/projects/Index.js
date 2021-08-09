@@ -33,7 +33,7 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(3);
+    const [itemPerPage, setItemPerPage] = useState(2);
 
 	const [ projects, setProjects ] = useState([]);
     const [ projectsCopy, setProjectsCopy ] = useState([]);
@@ -74,13 +74,13 @@ export default function Index() {
     }
     
     return (
-        <div className="container-md">
+        <div className="container-fluid">
             <div className="row">
             <div className="col-3 mt-5 border-end border-4">
                 <h4>Donation Goal Range: </h4>
                 <br/>
                 <input type="text" id="minDonation" />
-                <p>To</p>
+                <p className="my-3">To</p>
                 <input type="text" id="maxDonation" />
                 <div className="mt-3">
                 <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>

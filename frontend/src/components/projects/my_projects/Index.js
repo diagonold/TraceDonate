@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setNotLoggedIn } from '../../../redux/reducers/loggedInReducer';
 import { useHistory } from 'react-router-dom';
 import { setCreateNewProjectModalOpened } from '../../../redux/reducers/createNewProjectModalReducer';
+import { setCreateNewRequestModalOpened } from '../../../redux/reducers/createNewRequestModalReducer'; 
 import Pagination from 'react-js-pagination';
 import MyProject from './MyProject';
 
@@ -10,7 +11,6 @@ import BlockchainServices from '../../../services/Blockchain';
 import LocalStorageUtil from '../../../utils/LocalStorage';
 
 import '../../../styles/blockchain/project.css';
-import CreateNewProject from './CreateNewProject';
 
 export default function Index() {
 
@@ -42,34 +42,13 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(3);
+    const [itemPerPage, setItemPerPage] = useState(2);
 
 	const [ projects, setProjects ] = useState([]);
     const [ projectsCopy, setProjectsCopy ] = useState([]);
 
     const handlePageChange = (pageNumber) => {
         setActivePage(pageNumber);
-    }
-
-    const filterProjectByDonation = () => {
-        let filteredProject = [];
-        const min = parseInt(document.getElementById("minDonation").value);
-        const max = parseInt(document.getElementById("maxDonation").value);
-
-        if (isNaN(min) || isNaN(max)) {
-            return;
-        }
-
-        for (let project of projectsCopy) {
-            if (project.goal >= min && project.goal <= max) {
-                filteredProject.push(project);
-            }
-        }
-        setProjects(filteredProject);
-    }
-
-    const resetProjects = () => {
-        setProjects(projectsCopy);
     }
 
     let end = itemPerPage * activePage;
@@ -83,7 +62,7 @@ export default function Index() {
     }
     
     return (
-        <div className="container-md">  
+        <div className="container-fluid">  
             <div className="row">
             <div className="col-3 mt-5 border-end border-4">
             <div className="container-md my-4 py-3">
@@ -91,7 +70,7 @@ export default function Index() {
                 <button className="btn btn-primary" onClick={() => dispatch(setCreateNewProjectModalOpened())}>Create New Project</button>
                 </div>
                 <div className="mb-3">
-                    <button className="btn btn-primary">Create New Request</button>
+                    <button className="btn btn-primary" onClick={() => dispatch(setCreateNewRequestModalOpened())}>Create New Request</button>
                 </div>
             </div>
             </div>

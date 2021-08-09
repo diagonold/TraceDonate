@@ -95,4 +95,19 @@ export default class Blockchain {
             this.history.go(0);
         }        
     }
+
+    async createNewRequest(payload) {
+        try {
+            const response = await AxiosInstance.post("/api/create_request", payload, {
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
+            });
+            return response;
+        } catch(err) {
+            console.log(err);
+            this.history.push("/login");
+            this.history.go(0);
+        }        
+    }
 }

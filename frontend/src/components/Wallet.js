@@ -10,7 +10,7 @@ import BlockchainServices from '../services/Blockchain';
 
 const customStyles = {
     content: {
-      top: '30%',
+      top: '25%',
       left: '50%',
       right: 'auto',
       bottom: 'auto',

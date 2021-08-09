@@ -41,7 +41,7 @@ export default function MyProject({ project }) {
 
     return (
         <div 
-            className="container-md bg-white bg-gradient my-3 p-4 border border-4 text-start project-card-text" 
+            className="container-md bg-secondary my-3 p-4 border border-4 text-light text-start project-card-text" 
         >
             <div 
             style={{ cursor: "pointer" }}
