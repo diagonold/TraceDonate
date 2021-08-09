@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setNotLoggedIn } from '../../../redux/reducers/loggedInReducer';
 import { useHistory } from 'react-router-dom';
 import { setCreateNewProjectModalOpened } from '../../../redux/reducers/createNewProjectModalReducer';
+import { setCreateNewRequestModalOpened } from '../../../redux/reducers/createNewRequestModalReducer'; 
 import Pagination from 'react-js-pagination';
 import MyProject from './MyProject';
 
@@ -61,7 +62,7 @@ export default function Index() {
     }
     
     return (
-        <div className="container-md">  
+        <div className="container-fluid">  
             <div className="row">
             <div className="col-3 mt-5 border-end border-4">
             <div className="container-md my-4 py-3">
@@ -69,7 +70,7 @@ export default function Index() {
                 <button className="btn btn-primary" onClick={() => dispatch(setCreateNewProjectModalOpened())}>Create New Project</button>
                 </div>
                 <div className="mb-3">
-                    <button className="btn btn-primary">Create New Request</button>
+                    <button className="btn btn-primary" onClick={() => dispatch(setCreateNewRequestModalOpened())}>Create New Request</button>
                 </div>
             </div>
             </div>

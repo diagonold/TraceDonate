@@ -74,7 +74,7 @@ export default function Index() {
     }
     
     return (
-        <div className="container-md">
+        <div className="container-fluid">
             <div className="row">
             <div className="col-3 mt-5 border-end border-4">
                 <h4>Donation Goal Range: </h4>

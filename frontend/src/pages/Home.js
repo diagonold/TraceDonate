@@ -12,6 +12,7 @@ import Wallet from '../components/Wallet';
 import ProjectDetails from '../components/projects/ProjectDetails';
 import DonationThankYou from '../components/projects/DonationThankYou';
 import CreateNewProject from '../components/projects/my_projects/CreateNewProject';
+import CreateNewRequest from '../components/projects/my_projects/CreateNewRequest';
 
 export default function Home() {
 
@@ -30,6 +31,8 @@ export default function Home() {
 	const donationThankYou = useSelector((state) => state.donationThankYouModal.opened);
 
 	const createNewProject = useSelector((state) => state.createNewProjectModal.value);
+
+	const createNewRequest = useSelector((state) => state.createNewRequestModal.value);
 
 	useEffect(() => {
 		(async () => {
@@ -69,6 +72,9 @@ export default function Home() {
 		)}
 		{ createNewProject && (
 			<CreateNewProject />
+		)}
+		{ createNewRequest && (
+			<CreateNewRequest />
 		)}
 		{ page === 1 && (
 			<ProjectIndex />
