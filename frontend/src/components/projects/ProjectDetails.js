@@ -40,8 +40,8 @@ export default function ProjectDetails() {
   const voteForRequest = async (project_address, request_id) => {
     const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
     const response = await blockchainServices.vote({
-      "project_address": project_address,
-      "request_id": request_id
+      "project_addy": project_address,
+      "request_id": parseInt(request_id)
     });
     if (response.status === 201) {
       dispatch(setProjectModalOpened(details));

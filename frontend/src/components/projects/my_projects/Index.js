@@ -10,7 +10,6 @@ import BlockchainServices from '../../../services/Blockchain';
 import LocalStorageUtil from '../../../utils/LocalStorage';
 
 import '../../../styles/blockchain/project.css';
-import CreateNewProject from './CreateNewProject';
 
 export default function Index() {
 
@@ -49,27 +48,6 @@ export default function Index() {
 
     const handlePageChange = (pageNumber) => {
         setActivePage(pageNumber);
-    }
-
-    const filterProjectByDonation = () => {
-        let filteredProject = [];
-        const min = parseInt(document.getElementById("minDonation").value);
-        const max = parseInt(document.getElementById("maxDonation").value);
-
-        if (isNaN(min) || isNaN(max)) {
-            return;
-        }
-
-        for (let project of projectsCopy) {
-            if (project.goal >= min && project.goal <= max) {
-                filteredProject.push(project);
-            }
-        }
-        setProjects(filteredProject);
-    }
-
-    const resetProjects = () => {
-        setProjects(projectsCopy);
     }
 
     let end = itemPerPage * activePage;

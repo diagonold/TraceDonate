@@ -65,7 +65,7 @@ export default function CreateNewProject() {
         return (
             <div className="my-3 d-flex justify-content-center">
             <form onSubmit={handleSubmit(onSubmitCreateNewProject)} className="container-fluid">
-            <h4 className="text-center">Create New Project</h4>
+            <h4 className="text-center">New Project</h4>
             <hr/>
                 <div className="mb-3 text-start">
                     <label className="text-dark form-label">Description: </label>

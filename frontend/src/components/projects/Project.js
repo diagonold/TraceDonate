@@ -29,9 +29,10 @@ export default function Project({ project }) {
 
      const donateToProject = async () => {
          const donationAmount = parseInt(document.getElementById("donationAmount").value);
+         if (isNaN(donationAmount)) return;
          const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
          const response = await blockchainServices.donate({
-             "receiver_addy": owner,
+             "project_addy": owner,
              "amount": donationAmount
          });
          if (response.status === 201) {
@@ -44,7 +45,7 @@ export default function Project({ project }) {
 
     return (
         <div 
-            className="container-md bg-white bg-gradient my-3 p-4 border border-4 text-start project-card-text" 
+            className="container-md bg-secondary my-3 p-4 border border-4 text-light text-start project-card-text" 
         >
             <div 
             style={{ cursor: "pointer" }}
@@ -63,7 +64,7 @@ export default function Project({ project }) {
             <div className="container-sm d-flex justify-content-end">
                 <input type="number" id="donationAmount" value={currentDonationAmount} onChange={(e) => {
                     setCurrentDonationAmount(e.target.value);
-                    if (currentDonationAmount > 0) {
+                    if (parseInt(currentDonationAmount) > 0) {
                         setNonEmptyDonationAmount(true);
                     } else {
                         setNonEmptyDonationAmount(false);
@@ -74,7 +75,7 @@ export default function Project({ project }) {
                 { nonEmptyDonationAmount ? 
                 <button type="button" className="btn btn-primary" onClick={donateToProject}>Donate</button>
                 :
-                <button type="button" className="btn btn-outline-secondary" disabled>Donate</button>
+                <button type="button" className="btn btn-outline-light" disabled>Donate</button>
                 }
             </div>
         </div>

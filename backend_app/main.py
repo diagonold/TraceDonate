@@ -164,16 +164,16 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
 def donate(donate_form: DonateForm, credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        print('Send %s to %s' % (donate_form.amount, donate_form.receiver_addy))
-        return {"msg": 'Send %s to %s' % (donate_form.amount, donate_form.receiver_addy)}
+        print('Send %s to %s' % (donate_form.amount, donate_form.project_addy))
+        return {"msg": 'Send %s to %s' % (donate_form.amount, donate_form.project_addy)}
 
 
 @app.post("/api/vote", status_code=201)
 def vote(vote_form: VoteForm, credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        print('Vote project %s request %s ' % (vote_form.project_address, vote_form.request_id))
-        return {"msg": 'Vote project %s request %s ' % (vote_form.project_address, vote_form.request_id)}
+        print('Vote project %s request %s ' % (vote_form.project_addy, vote_form.request_id))
+        return {"msg": 'Vote project %s request %s ' % (vote_form.project_addy, vote_form.request_id)}
 
 
 @app.post("/api/create_project", status_code=201)
