@@ -143,13 +143,15 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
                      'value': '100',
                      'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
                      'completed': True,
-                     'index': '1'
+                     'request_id': '1',
+                     'voted': False
                      },
                     {'requestDescription': 'requestDescription-22',
                      'value': '50',
                      'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
                      'completed': False,
-                     'index': '0'
+                     'request_id': '0',
+                     'voted': False
                      }
                 ]
             })
@@ -158,13 +160,12 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
     return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
 
-@app.post("/api/send", status_code=201)
-def send(send_payment_form: SendPaymentForm, credentials: HTTPAuthorizationCredentials = Security(security)):
+@app.post("/api/donate", status_code=201)
+def donate(donate_form: DonateForm, credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        print(send_payment_form)
-        print('Send %s to %s' % (send_payment_form.amount, send_payment_form.receiver_wallet))
-        return {"msg": "authorized send"}
+        print('Send %s to %s' % (donate_form.amount, donate_form.receiver_addy))
+        return {"msg": 'Send %s to %s' % (donate_form.amount, donate_form.receiver_addy)}
 
 
 @app.post("/api/vote", status_code=201)
@@ -172,7 +173,15 @@ def vote(vote_form: VoteForm, credentials: HTTPAuthorizationCredentials = Securi
     token = credentials.credentials
     if auth_handler.decode_token(token):
         print('Vote project %s request %s ' % (vote_form.project_address, vote_form.request_id))
-        return {"msg": "authorized rate"}
+        return {"msg": 'Vote project %s request %s ' % (vote_form.project_address, vote_form.request_id)}
+
+
+@app.post("/api/create_project", status_code=201)
+def create_project(create_project_form: CreateProjectForm, credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        print('Create project %s ' % create_project_form.description)
+        return {"msg": 'Create project %s ' % create_project_form.description}
 
 
 if __name__ == "__main__":

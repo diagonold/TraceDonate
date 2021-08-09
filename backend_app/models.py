@@ -6,8 +6,8 @@ class CredentialsForm(BaseModel):
     password: str
 
 
-class SendPaymentForm(BaseModel):
-    receiver_wallet: str
+class DonateForm(BaseModel):
+    receiver_addy: str
     amount: float
 
 
@@ -16,4 +16,7 @@ class VoteForm(BaseModel):
     request_id: int
 
 
-
+class CreateProjectForm(BaseModel):
+    description: str
+    min_donation_amount: float
+    goal: float
