@@ -122,13 +122,18 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
         projects_ls = []
         for i in range(10):
             projects_ls.append({
-                'owner': 'owner-%s' % i,
+                'owner': 'FAKE_0x%s' % uuid.uuid4().hex,
+                'participated': (True, False)[random.randint(-1, 1)],
                 'description': 'description-%s' % i,
                 'minDonation': '10',
                 'raisedDonation': '500',
                 'goal': '1000',
                 'numberOfDonors': '5',
-                'donations': {'addy1': '100', 'addy2': '200', 'addy3': '100', 'addy4': '50', 'addy5': '50'},
+                'donations': {'FAKE_0x%s' % uuid.uuid4().hex: '100',
+                              'FAKE_0x%s' % uuid.uuid4().hex: '200',
+                              'FAKE_0x%s' % uuid.uuid4().hex: '100',
+                              'FAKE_0x%s' % uuid.uuid4().hex: '50',
+                              'FAKE_0x%s' % uuid.uuid4().hex: '50'},
                 'requests': [
                     {'requestDescription': 'requestDescription-1',
                      'value': '100',
