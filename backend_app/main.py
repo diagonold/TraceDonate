@@ -76,10 +76,14 @@ def wallets(credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
         user = auth_handler.decode_token(token)
-        wallet = user['wallet']
-        balance = get_balance(wallet)
+        # TODO change back to ganache function
+        # wallet = user['wallet']
+        # balance = get_balance(wallet)
+        # return JSONResponse(status_code=status.HTTP_200_OK,
+        #                     content={"wallet": wallet, "balance": balance})
         return JSONResponse(status_code=status.HTTP_200_OK,
-                            content={"wallet": wallet, "balance": balance})
+                            content={"wallet": 'FAKE_0x%s' % uuid.uuid4().hex, "balance": '100'})
+
     return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
 
