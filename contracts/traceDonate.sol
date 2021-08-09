@@ -156,12 +156,11 @@ contract ProjectHub {
     
     event ProjectCreated(address projectAddress, string description, uint minDonation, uint goal);
     
-    function create_project(string memory _description, uint _minDonation, uint _goal ) public payable returns (address _projectAddress) {
+    function create_project(string memory _description, uint _minDonation, uint _goal ) public payable {
     // Create a new project, need to provide all the necessary attributes for that project
         Project project = new Project(_description, _minDonation, _goal);
         projects.push(project);
         emit ProjectCreated( address(project), _description, _minDonation, _goal);
-        _projectAddress = address(project);
     }
     
     function get_projects() public view returns (Project[] memory){
