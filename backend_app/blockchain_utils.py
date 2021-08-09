@@ -1,5 +1,6 @@
 import json
 from web3 import Web3
+from models import *
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
@@ -62,17 +63,25 @@ def contribute_to(from_addy, from_key, to_addy, amount):
     print(web3.toHex(txn_hash))
 
 
-def create_project(from_addy, from_key, project_details):
+def create_project(from_addy, from_key, create_project_form: CreateProjectForm):
     abi = get_abi_from_json('../build/contracts/ProjectHub.json')
     contract = web3.eth.contract(address=projectHub_address, abi=abi)
     nonce = web3.eth.getTransactionCount(from_addy)
-    txn = contract.functions.create_project(project_details, 1, 100).buildTransaction({
-        'nonce': nonce
-    })
+    txn = contract.functions.create_project(create_project_form.description,
+                                            create_project_form.min_donation_amount,
+                                            create_project_form.goal).buildTransaction({'nonce': nonce})
     signed_txn = web3.eth.account.signTransaction(txn, private_key=from_key)
     txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    print(txn_hash)
 
+    tx_receipt = web3.eth.waitForTransactionReceipt(txn_hash)
+    # # # Create the contract instance with the newly-deployed address
+    # contract = web3.eth.contract(
+    #     address=tx_receipt.contractAddress,
+    #     abi=abi,
+    # )
+    print(tx_receipt.contractAddress)
+    print(web3.toHex(txn_hash))
+    return
 
 def get_all_projects():
     abi = get_abi_from_json('../build/contracts/ProjectHub.json')
@@ -102,11 +111,18 @@ def create_request(owner_addy, owner_key, request_details):
 
 if __name__ == '__main__':
     ...
-    wallet = '0xf5767E5cE7Bcf472278213CB7Be6530a557bB76A'
-    key = '9ad1bd96492969aae61c6bae6b7dc3911e02166681dd66ee7524b43b87c3c6bf'
+    wallet = '0x7e5cd0cF4A9fD488195421841f014188dA498a7c'
+    key = '8c05f73f8c628011405e8894344285c15bf8ee79d951c1c32833abdd1ccdefda'
     print(get_all_projects())
-    create_request(wallet, key, 'create_request_test')
-    print(get_project_details('0x140378E5DCA2F38d165eDc040903Ac031c9Dab75'))
+
+    form = CreateProjectForm
+    form.description = 'testing'
+    form.min_donation_amount = 10
+    form.goal = 100
+
+    print(create_project(wallet, key, form))
+    print(get_all_projects())
+
 
     # contribute_to(
     #     '0x7aFAEa96DDaB899748D65dD06b5607e5CeB71876',

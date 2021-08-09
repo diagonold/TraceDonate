@@ -181,8 +181,16 @@ def create_project(create_project_form: CreateProjectForm,
                    credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        print('Create project %s ' % create_project_form.description)
-        return {"msg": 'Create project %s ' % create_project_form.description}
+        user = auth_handler.decode_token(token)
+        try:
+            create_project(user['wallet'], user['private_key'], create_project_form)
+        except Exception as err:
+            print(err)
+            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": "Server error"})
+        else:
+            print('Create project %s ' % create_project_form.description)
+            return JSONResponse(status_code=status.HTTP_200_OK,
+                                content={"msg": 'Create project %s ' % create_project_form.description})
 
 
 @app.post("/api/create_request", status_code=201)
@@ -191,10 +199,11 @@ def create_request(create_request_form: CreateRequestForm,
     token = credentials.credentials
     if auth_handler.decode_token(token):
         print('Create request %s for project %s '
-              % (create_request_form.description, create_request_form.project_address))
+              % (create_request_form.description, create_request_form.project_addy))
 
-        return {"msg": 'Create request %s for project %s '
-                       % (create_request_form.description, create_request_form.project_address)}
+        return JSONResponse(status_code=status.HTTP_200_OK,
+                            content={"msg": 'Create request %s for project %s '
+                                            % (create_request_form.description, create_request_form.project_addy)})
 
 
 if __name__ == "__main__":
