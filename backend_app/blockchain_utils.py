@@ -4,7 +4,7 @@ from models import *
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-projectHub_address = '0xa875708442458BE3635d4Bc928474a5Ed6Be02Ac'
+projectHub_address = '0x8b50Ca3298BbF8e4680780766b4dC66cFB5C8997'
 
 
 def create_account():
@@ -74,14 +74,11 @@ def create_project(from_addy, from_key, create_project_form: CreateProjectForm):
     txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
 
     tx_receipt = web3.eth.waitForTransactionReceipt(txn_hash)
-    # # # Create the contract instance with the newly-deployed address
-    # contract = web3.eth.contract(
-    #     address=tx_receipt.contractAddress,
-    #     abi=abi,
-    # )
-    print(tx_receipt.contractAddress)
-    print(web3.toHex(txn_hash))
-    return
+    logs = contract.events.ProjectCreated().processReceipt(tx_receipt)
+    project_addy = logs[0]['args']['projectAddress']
+    print(project_addy)
+    return project_addy
+
 
 def get_all_projects():
     abi = get_abi_from_json('../build/contracts/ProjectHub.json')
@@ -90,7 +87,13 @@ def get_all_projects():
     return projects_ls
 
 
-def get_project_details(project_addy):
+def get_project_requests(project_addy):
+    abi = get_abi_from_json('../build/contracts/Project.json')
+    contract = web3.eth.contract(address=project_addy, abi=abi)
+    print(contract.functions.requests.call())
+    return
+
+def get_project_summary(project_addy):
     abi = get_abi_from_json('../build/contracts/Project.json')
     contract = web3.eth.contract(address=project_addy, abi=abi)
     project_details = contract.functions.get_summary().call()
@@ -101,7 +104,8 @@ def create_request(owner_addy, owner_key, request_details):
     abi = get_abi_from_json('../build/contracts/Project.json')
     contract = web3.eth.contract(address=owner_addy, abi=abi)
     nonce = web3.eth.getTransactionCount(owner_addy)
-    txn = contract.functions.create_request(request_details, '0xe942dEa825c2B401830F1DfD6994C8849F062954', 100).buildTransaction({
+    txn = contract.functions.create_request(request_details, '0xe942dEa825c2B401830F1DfD6994C8849F062954',
+                                            100).buildTransaction({
         'nonce': nonce
     })
     signed_txn = web3.eth.account.signTransaction(txn, private_key=owner_key)
@@ -111,18 +115,14 @@ def create_request(owner_addy, owner_key, request_details):
 
 if __name__ == '__main__':
     ...
-    wallet = '0x7e5cd0cF4A9fD488195421841f014188dA498a7c'
-    key = '8c05f73f8c628011405e8894344285c15bf8ee79d951c1c32833abdd1ccdefda'
-    print(get_all_projects())
 
-    form = CreateProjectForm
-    form.description = 'testing'
-    form.min_donation_amount = 10
-    form.goal = 100
+    ls = get_all_projects()
+    for i in ls:
+        # print(i)
+        print(get_project_summary(i))
+        print(get_project_requests(i))
 
-    print(create_project(wallet, key, form))
-    print(get_all_projects())
-
+    # print(web3.eth.getTransaction('0xd5f4c870704aa4a753aed104a0dcf7dded6c8c1a99aebfd5d0305ed36c88da3f'))
 
     # contribute_to(
     #     '0x7aFAEa96DDaB899748D65dD06b5607e5CeB71876',
