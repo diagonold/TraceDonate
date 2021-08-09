@@ -33,7 +33,7 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(3);
+    const [itemPerPage, setItemPerPage] = useState(2);
 
 	const [ projects, setProjects ] = useState([]);
     const [ projectsCopy, setProjectsCopy ] = useState([]);
