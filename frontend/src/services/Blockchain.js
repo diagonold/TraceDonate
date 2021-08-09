@@ -38,7 +38,7 @@ export default class Blockchain {
 
     async getWallet() {
         try {
-            const response = await AxiosInstance.get("/api/wallets", {
+            const response = await AxiosInstance.post("/api/wallets", {
                 headers: {
                     "Authorization": `Bearer ${this.token}`
                 }
@@ -49,5 +49,21 @@ export default class Blockchain {
             this.history.push("/login");
             this.history.go(0);
         }
+    }
+
+    async vote(payload) {
+        console.log(payload);
+        try {
+            const response = await AxiosInstance.post("/api/vote", payload, {
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
+            });
+            return response;
+        } catch(err) {
+            console.log(err);
+            this.history.push("/login");
+            this.history.go(0);
+        }        
     }
 }
