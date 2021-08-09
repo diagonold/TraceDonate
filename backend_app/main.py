@@ -63,25 +63,28 @@ def login(login_form: CredentialsForm):
             return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid username"})
         if not auth_handler.verify_password(login_form.password, user['password']):
             return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid password"})
-        token = auth_handler.encode_token(user['username'])
+        token = auth_handler.encode_token(user)
         return JSONResponse(status_code=status.HTTP_200_OK, content={"token": token, "username": user['username']})
     except Exception as err:
         print(err)
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": "Fail to login"})
 
 
-@app.get("/api/wallets", status_code=200)
+@app.get("/api/wallets", status_code=200, responses={
+    401: {"description": "Invalid Token"}})
 def wallets(credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        user_name = auth_handler.decode_token(token).strip()
-        print(user_name)
-
+        user = auth_handler.decode_token(token)
+        wallet = user['wallet']
+        balance = get_balance(wallet)
         return JSONResponse(status_code=status.HTTP_200_OK,
-                            content={"wallet": "FAKE_0xc39Bba04F774b825bE5060bf28645CD82AC29bA4", "balance": "100"})
+                            content={"wallet": wallet, "balance": balance})
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
 
-@app.get("/api/transactions", status_code=200)
+@app.get("/api/transactions", status_code=200, responses={
+    401: {"description": "Invalid Token"}})
 def transactions(credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
@@ -98,8 +101,11 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
         return JSONResponse(status_code=status.HTTP_200_OK,
                             content={"transactions": transactions_ls})
 
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
-@app.get("/api/projects", status_code=200)
+
+@app.get("/api/projects", status_code=200, responses={
+    401: {"description": "Invalid Token"}})
 def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
     """
     address public owner;
@@ -116,30 +122,31 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
         projects_ls = []
         for i in range(10):
             projects_ls.append({
-            'owner': 'owner-%s' % i,
-            'description': 'description-%s' % i,
-            'minDonation': '10',
-            'raisedDonation': '500',
-            'goal': '1000',
-            'numberOfDonors': '5',
-            'donations': {'addy1': '100', 'addy2': '200', 'addy3': '100', 'addy4': '50', 'addy5': '50'},
-            'requests': [
-                {'requestDescription': 'requestDescription-1',
-                 'value': '100',
-                 'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
-                 'completed': True,
-                 'index': '1'
-                 },
-                {'requestDescription': 'requestDescription-22',
-                 'value': '50',
-                 'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
-                 'completed': False,
-                 'index': '0'
-                 }
-            ]
-        })
+                'owner': 'owner-%s' % i,
+                'description': 'description-%s' % i,
+                'minDonation': '10',
+                'raisedDonation': '500',
+                'goal': '1000',
+                'numberOfDonors': '5',
+                'donations': {'addy1': '100', 'addy2': '200', 'addy3': '100', 'addy4': '50', 'addy5': '50'},
+                'requests': [
+                    {'requestDescription': 'requestDescription-1',
+                     'value': '100',
+                     'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
+                     'completed': True,
+                     'index': '1'
+                     },
+                    {'requestDescription': 'requestDescription-22',
+                     'value': '50',
+                     'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
+                     'completed': False,
+                     'index': '0'
+                     }
+                ]
+            })
 
         return JSONResponse(status_code=status.HTTP_200_OK, content={"projects": projects_ls})
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
 
 @app.post("/api/send", status_code=201)
