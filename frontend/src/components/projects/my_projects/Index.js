@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setNotLoggedIn } from '../../redux/reducers/loggedInReducer';
+import { setNotLoggedIn } from '../../../redux/reducers/loggedInReducer';
 import { useHistory } from 'react-router-dom';
+import { setCreateNewProjectModalOpened } from '../../../redux/reducers/createNewProjectModalReducer';
 import Pagination from 'react-js-pagination';
-import Project from './Project';
+import MyProject from './MyProject';
 
-import BlockchainServices from '../../services/Blockchain';
-import LocalStorageUtil from '../../utils/LocalStorage';
+import BlockchainServices from '../../../services/Blockchain';
+import LocalStorageUtil from '../../../utils/LocalStorage';
 
-import '../../styles/blockchain/project.css';
+import '../../../styles/blockchain/project.css';
+import CreateNewProject from './CreateNewProject';
 
 export default function Index() {
 
@@ -20,8 +22,15 @@ export default function Index() {
             const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
             const response = await blockchainServices.getProjects();
             if (response && response.status === 200) {
-                setProjects(response.data.projects);
-                setProjectsCopy(response.data.projects);
+                let myProjects = [];
+                let unfilteredProjects = response.data.projects;
+                for (let project of unfilteredProjects) {
+                    if (project.owner === LocalStorageUtil.read("TraceDonateUsername")) {
+                        myProjects.push(project);
+                    }
+                }
+                setProjects(myProjects);
+                setProjectsCopy(myProjects);
             } else {
                 dispatch(setNotLoggedIn());
                 LocalStorageUtil.remove("token");
@@ -74,22 +83,20 @@ export default function Index() {
     }
     
     return (
-        <div className="container-md">
+        <div className="container-md">  
             <div className="row">
             <div className="col-3 mt-5 border-end border-4">
-                <h4>Donation Goal Range: </h4>
-                <br/>
-                <input type="text" id="minDonation" />
-                <p>To</p>
-                <input type="text" id="maxDonation" />
-                <div className="mt-3">
-                <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
-                &nbsp;
-                <button type="button" className="btn btn-light border border-4" onClick={resetProjects}>Reset Filter</button>
+            <div className="container-md my-4 py-3">
+                <div className="mb-3">
+                <button className="btn btn-primary" onClick={() => dispatch(setCreateNewProjectModalOpened())}>Create New Project</button>
+                </div>
+                <div className="mb-3">
+                    <button className="btn btn-primary">Create New Request</button>
                 </div>
             </div>
+            </div>
             <div className="col">
-            { projectsCopy.length > 0 && (
+            { projectsCopy.length > 0 ?
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
                         activePage={activePage}
@@ -100,13 +107,15 @@ export default function Index() {
                         onChange={handlePageChange}     
                     />
                 </div>
-            )}
+                :
+                <div className="my-5"></div>
+            }
             <div className="container-md">
                 <p className="text-start">{projects.length} Projects Available</p>
             </div>
             <div className="container-md">
                 { allProjects.map((project, key) => {
-                    return <Project project={project} key={key} />
+                    return <MyProject project={project} key={key} />
                 }) }
             </div>
             </div>

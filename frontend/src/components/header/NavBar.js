@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setNotLoggedIn } from '../../redux/reducers/loggedInReducer';
-import { changeToPage1, changeToPage2 } from '../../redux/reducers/pageReducer';
+import { changeToPage1, changeToPage2, changeToPage3 } from '../../redux/reducers/pageReducer';
 import { setWalletModalOpened } from '../../redux/reducers/walletModalReducer';
 import { useHistory } from 'react-router-dom';
 
@@ -26,6 +26,9 @@ export default function NavBar() {
                 <ul class="navbar-nav mb-2 mb-lg-0 d-flex justify-content-end">
                     <li class="nav-item">
                         <a class="nav-link text-light" aria-current="page" href="#" onClick={() => dispatch(changeToPage1())}>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" aria-current="page" href="#" onClick={() => dispatch(changeToPage3())}>My Projects</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light" href="#" onClick={() => dispatch(changeToPage2())}>My Transactions</a>

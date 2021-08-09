@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setProjectModalOpened } from '../../redux/reducers/projectModalReducer';
-import { setDonationThankYouModalOpened } from '../../redux/reducers/donationThankYouModalReducer';
+import { setProjectModalOpened } from '../../../redux/reducers/projectModalReducer';
+import { setDonationThankYouModalOpened } from '../../../redux/reducers/donationThankYouModalReducer';
 
-import BlockchainServices from '../../services/Blockchain';
-import LocalStorageUtil from '../../utils/LocalStorage';
+import BlockchainServices from '../../../services/Blockchain';
+import LocalStorageUtil from '../../../utils/LocalStorage';
 
-export default function Project({ project }) {
+export default function MyProject({ project }) {
 
     const {
         owner,
@@ -23,9 +23,6 @@ export default function Project({ project }) {
      const dispatch = useDispatch();
 
      const history = useHistory();
-
-     const [ currentDonationAmount, setCurrentDonationAmount ] = useState(0);
-     const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(false);
 
      const donateToProject = async () => {
          const donationAmount = parseInt(document.getElementById("donationAmount").value);
@@ -61,21 +58,10 @@ export default function Project({ project }) {
             <p>{numberOfDonors} Donor(s)</p>
             </div>
             <div className="container-sm d-flex justify-content-end">
-                <input type="number" id="donationAmount" value={currentDonationAmount} onChange={(e) => {
-                    setCurrentDonationAmount(e.target.value);
-                    if (currentDonationAmount > 0) {
-                        setNonEmptyDonationAmount(true);
-                    } else {
-                        setNonEmptyDonationAmount(false);
-                    }
-                }}/>
+                <input type="number" id="donationAmount" />
                 &nbsp;
                 &nbsp;
-                { nonEmptyDonationAmount ? 
                 <button type="button" className="btn btn-primary" onClick={donateToProject}>Donate</button>
-                :
-                <button type="button" className="btn btn-outline-secondary" disabled>Donate</button>
-                }
             </div>
         </div>
     );
