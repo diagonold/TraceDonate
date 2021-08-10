@@ -24,8 +24,9 @@ export default function Index() {
             if (response && response.status === 200) {
                 let myProjects = [];
                 let unfilteredProjects = response.data.projects;
+                const myWallet = await blockchainServices.getWallet();
                 for (let project of unfilteredProjects) {
-                    if (project.owner === LocalStorageUtil.read("TraceDonateUsername")) {
+                    if (project.owner === myWallet.data.wallet) {
                         myProjects.push(project);
                     }
                 }
