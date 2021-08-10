@@ -1,7 +1,12 @@
 import sqlite3
+import time
 import json
 
 DB_FILE = "database.db"
+
+
+def unix_time_now():
+    return int(time.time())
 
 
 def user_exist(username):
@@ -54,15 +59,15 @@ def create_project(username, project_addy):
     with sqlite3.connect(DB_FILE) as con:
         cur = con.cursor()
         cur.execute("""
-                    INSERT INTO projects (owner_id , project_addy)
+                    INSERT INTO projects (owner_id , project_addy, ts)
                     VALUES (
                         (SELECT a.id 
                         FROM account a
                         WHERE a.username = (?)),
-                        (?)
+                        (?),(?)
                     ) 
                     """,
-                    (username, project_addy))
+                    (username, project_addy, unix_time_now()))
 
 
 def get_all_project_addy():
@@ -81,15 +86,15 @@ def donate(username, project_addy, amount):
     with sqlite3.connect(DB_FILE) as con:
         cur = con.cursor()
         cur.execute("""
-                    INSERT INTO transactions (account_id , to_addy, amount)
+                    INSERT INTO transactions (account_id , to_addy, amount, ts)
                     VALUES (
                         (SELECT a.id 
                         FROM account a
                         WHERE a.username = (?)),
-                        (?),(?)
+                        (?),(?),(?)
                     )
                     """,
-                    (username, project_addy, amount))
+                    (username, project_addy, amount, unix_time_now()))
 
 
 def get_all_transaction_from_user(username):
@@ -108,6 +113,42 @@ def get_all_transaction_from_user(username):
         return res
 
 
+def vote_request(username, project_addy, request_index):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    INSERT INTO votes (account_id, project_id, request_index, ts)
+                    VALUES (
+                        (SELECT a.id 
+                        FROM account a
+                        WHERE a.username = (?)),
+                        (SELECT p.id 
+                        FROM projects p
+                        WHERE p.project_addy = (?)),
+                        (?),(?)
+                    )
+                    """,
+                    (username, project_addy, request_index, unix_time_now()))
+
+
+def is_request_voted(username, project_addy, request_index):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    SELECT v.*
+                    FROM votes v 
+                    LEFT JOIN account a, projects p
+                    ON a.id = v.account_id and p.project_addy = p.project_addy 
+                    WHERE a.username = (?) 
+                    AND p.project_addy = (?)
+                    AND v.request_index = (?)
+                    """,
+                    (username, project_addy, request_index))
+        res = cur.fetchall()
+        print(len(res))
+        return len(res) > 0
+
+
 if __name__ == '__main__':
     ...
     # print(user_exist('a'))
@@ -119,4 +160,9 @@ if __name__ == '__main__':
     # a = get_all_project_addy()
     # print(a)
     # donate('test','string_fake_addy',10)
-    get_all_transaction_from_user('string')
+    # vote_request('string',
+    #              '0xebF2E1C8814d94B301a248ee0d2a448E385F3744',
+    #              0)
+    is_request_voted('string',
+                     '0xebF2E1C8814d94B301a248ee0d2a448E385F3744',
+                     0)

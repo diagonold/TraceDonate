@@ -27,3 +27,8 @@ class CreateRequestForm(BaseModel):
     description: str
     receiver_addy: str
     amount: int
+
+
+class MakePaymentForm(BaseModel):
+    project_addy: str
+    request_index: int
