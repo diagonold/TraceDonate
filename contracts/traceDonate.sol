@@ -5,6 +5,7 @@ contract Project{
     // Storage state cariables
     address public owner;
     string public description;
+    string public name;
     uint public minDonation;
     uint public raisedDonation = 0;
     uint public goal;
@@ -41,7 +42,8 @@ contract Project{
         _;
     }
     
-    constructor( string memory _description, uint _minDonation, uint _goal) public {
+    constructor( string memory _name, string memory _description, uint _minDonation, uint _goal) public {
+        name = _name;
         description = _description;
         minDonation = _minDonation;
         goal = _goal;
@@ -115,12 +117,14 @@ contract Project{
 
     function get_summary() public view returns ( 
     address _owner, 
+    string memory _name,
     string memory _description,
     uint _minDonation,
     uint _raisedDonation,
     uint _goal,
     uint _numberOfDonors,
     uint _numRequests ){
+        _name = name;
         _owner = owner;
         _description = description;
         _minDonation = minDonation;
@@ -154,13 +158,13 @@ contract ProjectHub {
     // state variables
     Project[] public projects;
     
-    event ProjectCreated(address projectAddress, string description, uint minDonation, uint goal);
+    event ProjectCreated(address projectAddress, string name, string description, uint minDonation, uint goal);
     
-    function create_project(string memory _description, uint _minDonation, uint _goal ) public payable {
+    function create_project(string memory _name, string memory _description, uint _minDonation, uint _goal ) public payable {
     // Create a new project, need to provide all the necessary attributes for that project
-        Project project = new Project(_description, _minDonation, _goal);
+        Project project = new Project(_name, _description, _minDonation, _goal);
         projects.push(project);
-        emit ProjectCreated( address(project), _description, _minDonation, _goal);
+        emit ProjectCreated( address(project), _name, _description, _minDonation, _goal);
     }
     
     function get_projects() public view returns (Project[] memory){
