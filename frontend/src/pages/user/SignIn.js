@@ -1,6 +1,7 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn } from '../../redux/reducers/loggedInReducer';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../redux/reducers/loadingSpinnerOverlayReducer';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useHistory } from 'react-router-dom';
@@ -10,6 +11,7 @@ import LocalStorageutil from '../../utils/LocalStorage';
 import WelcomeTitles from '../../components/WelcomeTitles';
 
 import { signInSchema } from '../../schema/User';
+import LoadingSpinnerOverlay from '../../components/LoadingSpinnerOverlay';
 
 const authServices = new AuthServices();
 
@@ -26,19 +28,24 @@ export default function SignIn() {
 
 	const history = useHistory();
 
+	const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
+
 	const onSubmitLogin = async (payload) => {
 		try {
+			dispatch(setLoadingSpinnerOverlayShown());
 			const response = await authServices.login(payload);
 			if (response.status === 200) {
 				const token = response.data.token;
 				const username = response.data.username;
 				LocalStorageutil.create("token", token);
 				LocalStorageutil.create("TraceDonateUsername", username);
+				dispatch(setLoadingSpinnerOverlayNotShown());
 				dispatch(setLoggedIn());
 				history.push("/");
 				history.go(0);
 			}
 		} catch(err) {
+			dispatch(setLoadingSpinnerOverlayNotShown());
 			alert("Error signning in");
 		}
 	}
@@ -46,24 +53,28 @@ export default function SignIn() {
     return (
 		<>
 		<WelcomeTitles />
-    	<div class="container-fluid mt-4">
+    	<div class="container-md mt-4 w-25">
         	<form onSubmit={handleSubmit(onSubmitLogin)}>
-				<div className="form-group">
-					<label className="text-dark">Username: </label>
+				<div className="form-group text-start">
+					<label className="text-dark form-label">Username: </label>
 					<br/>
-					<input type="text" {...register("username")} />
+					<input type="text" className="form-control" {...register("username")} />
                     <div className="error text-danger">{errors.username?.message}</div>
 				</div>
 				<br/>
-				<div className="form-group">
-					<label className="text-dark">Password: </label>
+				<div className="form-group text-start">
+					<label className="text-dark form-label">Password: </label>
 					<br/>
-					<input type="password" {...register("password")} />
+					<input type="password" className="form-control" {...register("password")} />
 					<div className="error text-danger">{errors.password?.message}</div>
 				</div>
-				<p>Don't have an account yet? <Link to="/register" style={{textDecoration: "none"}}>Sign up</Link> here!</p>
-				<input className="btn btn-secondary" type="submit" value="Sign In" />
+				<p className="text-end">Don't have an account yet? <Link to="/register" style={{textDecoration: "none"}}>Sign up</Link> here!</p>
+				<br/>
+				<input className="btn btn-primary" type="submit" value="Sign In" />
         	</form>
+			{ loadingSpinnerOverlay && (
+				<LoadingSpinnerOverlay />
+			)}
         </div>
 		</>
     );

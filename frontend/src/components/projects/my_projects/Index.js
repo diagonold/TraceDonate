@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setNotLoggedIn } from '../../../redux/reducers/loggedInReducer';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../../redux/reducers/loadingSpinnerOverlayReducer';
 import { useHistory } from 'react-router-dom';
 import { setCreateNewProjectModalOpened } from '../../../redux/reducers/createNewProjectModalReducer';
+import { setCreateNewRequestModalOpened } from '../../../redux/reducers/createNewRequestModalReducer'; 
 import Pagination from 'react-js-pagination';
 import MyProject from './MyProject';
 
@@ -10,31 +12,37 @@ import BlockchainServices from '../../../services/Blockchain';
 import LocalStorageUtil from '../../../utils/LocalStorage';
 
 import '../../../styles/blockchain/project.css';
-import CreateNewProject from './CreateNewProject';
+import LoadingSpinnerOverlay from '../../LoadingSpinnerOverlay';
 
 export default function Index() {
 
     const dispatch = useDispatch();
     const history = useHistory();
 
+    const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
+
     useEffect(() => {
         (async () => {
+            dispatch(setLoadingSpinnerOverlayShown());
             const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
             const response = await blockchainServices.getProjects();
             if (response && response.status === 200) {
                 let myProjects = [];
                 let unfilteredProjects = response.data.projects;
                 for (let project of unfilteredProjects) {
-                    if (project.owner === LocalStorageUtil.read("TraceDonateUsername")) {
+                    if (project.owner === LocalStorageUtil.read("TraceDonateWallet")) {
                         myProjects.push(project);
                     }
                 }
                 setProjects(myProjects);
                 setProjectsCopy(myProjects);
+                dispatch(setLoadingSpinnerOverlayNotShown());
             } else {
                 dispatch(setNotLoggedIn());
                 LocalStorageUtil.remove("token");
                 LocalStorageUtil.remove("TraceDonateUsername");
+                LocalStorageUtil.remove("TraceDonateWallet");
+                dispatch(setLoadingSpinnerOverlayNotShown());
                 history.push("/login");
                 history.go(0);
             }
@@ -42,34 +50,13 @@ export default function Index() {
     }, []);
 
     const [activePage, setActivePage] = useState(1);
-    const [itemPerPage, setItemPerPage] = useState(3);
+    const [itemPerPage, setItemPerPage] = useState(2);
 
 	const [ projects, setProjects ] = useState([]);
     const [ projectsCopy, setProjectsCopy ] = useState([]);
 
     const handlePageChange = (pageNumber) => {
         setActivePage(pageNumber);
-    }
-
-    const filterProjectByDonation = () => {
-        let filteredProject = [];
-        const min = parseInt(document.getElementById("minDonation").value);
-        const max = parseInt(document.getElementById("maxDonation").value);
-
-        if (isNaN(min) || isNaN(max)) {
-            return;
-        }
-
-        for (let project of projectsCopy) {
-            if (project.goal >= min && project.goal <= max) {
-                filteredProject.push(project);
-            }
-        }
-        setProjects(filteredProject);
-    }
-
-    const resetProjects = () => {
-        setProjects(projectsCopy);
     }
 
     let end = itemPerPage * activePage;
@@ -83,11 +70,23 @@ export default function Index() {
     }
     
     return (
-        <>  
-            <div className="container-md my-3 d-flex justify-content-center">
+        <div className="container-fluid">  
+            <div className="row">
+            <div className="col-3 mt-5 border-end border-4">
+            <div className="container-md my-4 py-3">
+                <div className="mb-3">
                 <button className="btn btn-primary" onClick={() => dispatch(setCreateNewProjectModalOpened())}>Create New Project</button>
+                </div>
+                <div className="mb-3">
+                    <button className="btn btn-primary" onClick={() => dispatch(setCreateNewRequestModalOpened())}>Create New Request</button>
+                </div>
             </div>
-            { projectsCopy.length > 0 && (
+            </div>
+            <div className="col">
+            { !loadingSpinnerOverlay 
+            ?
+            <>
+            { projectsCopy.length > 0 ?
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
                         activePage={activePage}
@@ -98,22 +97,13 @@ export default function Index() {
                         onChange={handlePageChange}     
                     />
                 </div>
-            )}
-            {/*
-            <div className="container-md">
-                Donation Goal Range: &nbsp;
-                <input type="text" id="minDonation" />
-                &nbsp;
-                To
-                &nbsp;
-                <input type="text" id="maxDonation" />
-                <br/>
-                <br/>
-                <button type="button" className="btn btn-primary" onClick={filterProjectByDonation}>Filter</button>
-                &nbsp;
-                <button type="button" className="btn btn-light border border-4" onClick={resetProjects}>Reset Filter</button>
-            </div>
-            */}
+                :
+                <div className="my-5"></div>
+            }
+            </>
+            :
+            <LoadingSpinnerOverlay />
+            }
             <div className="container-md">
                 <p className="text-start">{projects.length} Projects Available</p>
             </div>
@@ -122,6 +112,8 @@ export default function Index() {
                     return <MyProject project={project} key={key} />
                 }) }
             </div>
-        </>
+            </div>
+            </div>
+        </div>
     );
 }

@@ -11,6 +11,7 @@ export default function Transaction({ transaction }) {
         ts 
     } = transaction;
 
+    /*
     let {
         year,
         month,
@@ -19,13 +20,14 @@ export default function Transaction({ transaction }) {
         minutes,
         seconds
     } = new DateTimeUtil(ts).unixTimeStampParser();
+    */
     
     return (
-        <div className="container-fluid my-3 p-4 border border-4 bg-white bg-gradient text-start transaction-card-text">
+        <div className="container-fluid my-3 p-4 border border-4 bg-white text-start transaction-card-text">
             <p>To: {to}</p>
             <hr/>
             <p>Amount: {amount}</p>
-            <p>{year}-{month}-{day} {hours}:{minutes}:{seconds}</p>
+            <p>{ts}</p>
         </div>
     );
 }

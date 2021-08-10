@@ -8,7 +8,7 @@ class CredentialsForm(BaseModel):
 
 class DonateForm(BaseModel):
     project_addy: str
-    amount: float
+    amount: int
 
 
 class VoteForm(BaseModel):
@@ -18,12 +18,12 @@ class VoteForm(BaseModel):
 
 class CreateProjectForm(BaseModel):
     description: str
-    min_donation_amount: float
-    goal: float
+    min_donation_amount: int
+    goal: int
 
 
 class CreateRequestForm(BaseModel):
     project_addy: str
     description: str
     receiver_addy: str
-    amount: float
+    amount: int

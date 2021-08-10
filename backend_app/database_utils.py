@@ -50,10 +50,73 @@ def get_user(username):
         return None
 
 
+def create_project(username, project_addy):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    INSERT INTO projects (owner_id , project_addy)
+                    VALUES (
+                        (SELECT a.id 
+                        FROM account a
+                        WHERE a.username = (?)),
+                        (?)
+                    ) 
+                    """,
+                    (username, project_addy))
+
+
+def get_all_project_addy():
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    SELECT project_addy
+                    FROM projects
+                    """)
+        res = cur.fetchall()
+        project_addy_ls = [i[0] for i in res]
+        return project_addy_ls
+
+
+def donate(username, project_addy, amount):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    INSERT INTO transactions (account_id , to_addy, amount)
+                    VALUES (
+                        (SELECT a.id 
+                        FROM account a
+                        WHERE a.username = (?)),
+                        (?),(?)
+                    )
+                    """,
+                    (username, project_addy, amount))
+
+
+def get_all_transaction_from_user(username):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    SELECT t.to_addy, t.amount, t.ts 
+                    FROM transactions t
+                    LEFT JOIN account a
+                    ON a.id = t.account_id 
+                    WHERE a.username = (?)
+                    ORDER BY t.ts DESC 
+                    """,
+                    (username,))
+        res = cur.fetchall()
+        return res
+
+
 if __name__ == '__main__':
+    ...
     # print(user_exist('a'))
     # init_tables()
     # create_user('v', 'a', 'a', 'd')
     # print(db.user_exist('a'))
     # create_user(2,2,3)
-    print(get_user('test'))
+    # create_project('string','string_fake_addy')
+    # a = get_all_project_addy()
+    # print(a)
+    # donate('test','string_fake_addy',10)
+    get_all_transaction_from_user('string')

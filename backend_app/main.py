@@ -1,5 +1,5 @@
 import uvicorn
-import random, string, uuid
+import random, string, uuid, traceback
 
 from fastapi import FastAPI, status, Security
 from fastapi.responses import JSONResponse
@@ -7,9 +7,9 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
 
 from models import *
-from database_utils import *
+import database_utils as database_utils
 from auth import Auth
-from blockchain_utils import *
+import blockchain_utils as blockchain_utils
 
 app = FastAPI()
 security = HTTPBearer()
@@ -39,15 +39,16 @@ def root():
 })
 def register(register_form: CredentialsForm):
     try:
-        if user_exist(register_form.username):
+        if database_utils.user_exist(register_form.username):
             return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 content={"msg": "The username already exists"})
         else:
             hashed_password = auth_handler.encode_password(register_form.password)
-            account = create_account()
-            create_user(register_form.username, hashed_password, account['address'], account['key'])
+            account = blockchain_utils.create_account()
+            database_utils.create_user(register_form.username, hashed_password, account['address'], account['key'])
     except Exception as err:
         print(err)
+        traceback.print_exc()
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             content={"msg": "Fail to register"})
 
@@ -58,7 +59,7 @@ def register(register_form: CredentialsForm):
 })
 def login(login_form: CredentialsForm):
     try:
-        user = get_user(login_form.username)
+        user = database_utils.get_user(login_form.username)
         if user is None:
             return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid username"})
         if not auth_handler.verify_password(login_form.password, user['password']):
@@ -67,6 +68,7 @@ def login(login_form: CredentialsForm):
         return JSONResponse(status_code=status.HTTP_200_OK, content={"token": token, "username": user['username']})
     except Exception as err:
         print(err)
+        traceback.print_exc()
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": "Fail to login"})
 
 
@@ -76,13 +78,12 @@ def wallets(credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
         user = auth_handler.decode_token(token)
-        # TODO change back to ganache function
-        # wallet = user['wallet']
-        # balance = get_balance(wallet)
-        # return JSONResponse(status_code=status.HTTP_200_OK,
-        #                     content={"wallet": wallet, "balance": balance})
+        wallet = user['wallet']
+        balance = blockchain_utils.get_balance(wallet)
         return JSONResponse(status_code=status.HTTP_200_OK,
-                            content={"wallet": 'FAKE_0x%s' % uuid.uuid4().hex, "balance": '100'})
+                            content={"wallet": wallet, "balance": "%s" % balance})
+        # return JSONResponse(status_code=status.HTTP_200_OK,
+        #                     content={"wallet": 'FAKE_0x%s' % uuid.uuid4().hex, "balance": '100'})
 
     return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
@@ -93,17 +94,17 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
     token = credentials.credentials
     if auth_handler.decode_token(token):
         user_name = auth_handler.decode_token(token)['username'].strip()
-        print(user_name)
-        # TODO: use web3 to get transactions of this account.
-        transactions_ls = []
-        for i in range(10):
-            transactions_ls.append({"from": "FAKE_0x%s" % uuid.uuid4().hex,
-                                    "to": "FAKE_0x%s" % uuid.uuid4().hex,
-                                    "amount": "100",
-                                    "ts": "1628%s302" % random.randint(100, 999)})
+        transactions_ls = database_utils.get_all_transaction_from_user(user_name)
+        output = []
+        for transaction in transactions_ls:
+            output.append({
+                            "to": '%s' % transaction[0],
+                            "amount": '%s' % transaction[1],
+                            "ts": '%s' % transaction[2],
+                            })
 
         return JSONResponse(status_code=status.HTTP_200_OK,
-                            content={"transactions": transactions_ls})
+                            content={"transactions": output})
 
     return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
 
@@ -112,49 +113,67 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
     401: {"description": "Invalid Token"}})
 def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
     """
-    address public owner;
-    string public description;
-    uint public minDonation;
-    uint public raisedDonation = 0;
-    uint public goal;
-    uint public numberOfDonors;
+   0 address _owner,
+   1 string memory _description,
+   2 uint _minDonation,
+   3 uint _raisedDonation,
+   4 uint _goal,
+   5 uint _numberOfDonors,
+   6 uint _numRequests
     """
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        user_name = auth_handler.decode_token(token)['username'].strip()
-        print(user_name)
+        # user_name = auth_handler.decode_token(token)['username'].strip()
+
+        projects_addy_ls = database_utils.get_all_project_addy()
         projects_ls = []
-        for i in range(10):
+        for each_addy in projects_addy_ls:
+            project_details = blockchain_utils.get_project_summary(each_addy)
             projects_ls.append({
-                'owner': 'FAKE_0x%s' % uuid.uuid4().hex,
-                'participated': (True, False)[random.randint(-1, 1)],
-                'description': 'description-%s' % i,
-                'minDonation': '10',
-                'raisedDonation': '500',
-                'goal': '1000',
-                'numberOfDonors': '5',
-                'donations': {'FAKE_0x%s' % uuid.uuid4().hex: '100',
-                              'FAKE_0x%s' % uuid.uuid4().hex: '200',
-                              'FAKE_0x%s' % uuid.uuid4().hex: '100',
-                              'FAKE_0x%s' % uuid.uuid4().hex: '50',
-                              'FAKE_0x%s' % uuid.uuid4().hex: '50'},
-                'requests': [
-                    {'requestDescription': 'requestDescription-1',
-                     'value': '100',
-                     'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
-                     'completed': True,
-                     'request_id': '1',
-                     'voted': False
-                     },
-                    {'requestDescription': 'requestDescription-22',
-                     'value': '50',
-                     'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
-                     'completed': False,
-                     'request_id': '0',
-                     'voted': False
-                     }
-                ]
+                'owner': project_details[0],
+                'participated': False,
+                'description': project_details[1],
+                'minDonation': project_details[2],
+                'raisedDonation': project_details[3],
+                'goal': project_details[4],
+                'numberOfDonors': project_details[5],
+                'numRequests': project_details[6],
+                'donations': {},
+                'requests': []
             })
+
+        # projects_ls = []
+        # for i in range(10):
+        #     projects_ls.append({
+        #         'owner': 'FAKE_0x%s' % uuid.uuid4().hex,
+        #         'participated': (True, False)[random.randint(-1, 1)],
+        #         'description': 'description-%s' % i,
+        #         'minDonation': '10',
+        #         'raisedDonation': '500',
+        #         'goal': '1000',
+        #         'numberOfDonors': '5',
+        #         'donations': {'FAKE_0x%s' % uuid.uuid4().hex: '100',
+        #                       'FAKE_0x%s' % uuid.uuid4().hex: '200',
+        #                       'FAKE_0x%s' % uuid.uuid4().hex: '100',
+        #                       'FAKE_0x%s' % uuid.uuid4().hex: '50',
+        #                       'FAKE_0x%s' % uuid.uuid4().hex: '50'},
+        #         'requests': [
+        #             {'requestDescription': 'requestDescription-1',
+        #              'value': '100',
+        #              'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
+        #              'completed': True,
+        #              'request_id': '1',
+        #              'voted': False
+        #              },
+        #             {'requestDescription': 'requestDescription-22',
+        #              'value': '50',
+        #              'recipient': 'FAKE_0x%s' % uuid.uuid4().hex,
+        #              'completed': False,
+        #              'request_id': '0',
+        #              'voted': False
+        #              }
+        #         ]
+        #     })
 
         return JSONResponse(status_code=status.HTTP_200_OK, content={"projects": projects_ls})
     return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"msg": "Invalid token"})
@@ -164,8 +183,39 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
 def donate(donate_form: DonateForm, credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        print('Send %s to %s' % (donate_form.amount, donate_form.receiver_addy))
-        return {"msg": 'Send %s to %s' % (donate_form.amount, donate_form.receiver_addy)}
+        # {"username": res[0][0], "wallet": res[0][1], "password": res[0][2], "private_key": res[0][3]}
+        user = auth_handler.decode_token(token)
+        try:
+            blockchain_utils.contribute_to(user['wallet'], user['private_key'],
+                                           donate_form.project_addy, donate_form.amount)
+        except Exception as err:
+            print(err)
+            traceback.print_exc()
+            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": "Server error"})
+        else:
+            database_utils.donate(user['username'], donate_form.project_addy, donate_form.amount)
+            print('Send %s to %s' % (donate_form.amount, donate_form.project_addy))
+            return JSONResponse(status_code=status.HTTP_200_OK,
+                                content='Send %s to %s' % (donate_form.amount, donate_form.project_addy))
+
+
+@app.post("/api/create_project", status_code=201)
+def create_project(create_project_form: CreateProjectForm,
+                   credentials: HTTPAuthorizationCredentials = Security(security)):
+    token = credentials.credentials
+    if auth_handler.decode_token(token):
+        user = auth_handler.decode_token(token)
+        try:
+            project_addy = blockchain_utils.create_project(user['wallet'], user['private_key'], create_project_form)
+        except Exception as err:
+            print(err)
+            traceback.print_exc()
+            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": "Server error"})
+        else:
+            print(project_addy)
+            database_utils.create_project(user['username'], project_addy)
+            return JSONResponse(status_code=status.HTTP_200_OK,
+                                content={"msg": 'Create project %s ' % create_project_form.description})
 
 
 @app.post("/api/vote", status_code=201)
@@ -176,25 +226,17 @@ def vote(vote_form: VoteForm, credentials: HTTPAuthorizationCredentials = Securi
         return {"msg": 'Vote project %s request %s ' % (vote_form.project_address, vote_form.request_id)}
 
 
-@app.post("/api/create_project", status_code=201)
-def create_project(create_project_form: CreateProjectForm,
-                   credentials: HTTPAuthorizationCredentials = Security(security)):
-    token = credentials.credentials
-    if auth_handler.decode_token(token):
-        print('Create project %s ' % create_project_form.description)
-        return {"msg": 'Create project %s ' % create_project_form.description}
-
-
 @app.post("/api/create_request", status_code=201)
 def create_request(create_request_form: CreateRequestForm,
                    credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
         print('Create request %s for project %s '
-              % (create_request_form.description, create_request_form.project_address))
+              % (create_request_form.description, create_request_form.project_addy))
 
-        return {"msg": 'Create request %s for project %s '
-                       % (create_request_form.description, create_request_form.project_address)}
+        return JSONResponse(status_code=status.HTTP_200_OK,
+                            content={"msg": 'Create request %s for project %s '
+                                            % (create_request_form.description, create_request_form.project_addy)})
 
 
 if __name__ == "__main__":

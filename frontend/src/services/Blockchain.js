@@ -1,4 +1,7 @@
 import AxiosInstance from './AxiosFactory';
+import {
+    signOutUserOnException
+} from './CustomException';
 
 export default class Blockchain {
     constructor(token, history) {
@@ -15,9 +18,7 @@ export default class Blockchain {
             });
             return response;
         } catch(err) {
-            console.log(err);
-            this.history.push("/login");
-            this.history.go(0);
+            signOutUserOnException(err, this.history);
         }
     }
 
@@ -30,9 +31,7 @@ export default class Blockchain {
             });
             return response;
         } catch(err) {
-            console.log(err);
-            this.history.push("/login");
-            this.history.go(0);
+            signOutUserOnException(err, this.history);
         }
     }
 
@@ -45,9 +44,7 @@ export default class Blockchain {
             });
             return response;
         } catch(err) {
-            console.log(err);
-            this.history.push("/login");
-            this.history.go(0);
+            signOutUserOnException(err, this.history);
         }
     }
 
@@ -60,9 +57,7 @@ export default class Blockchain {
             });
             return response;
         } catch(err) {
-            console.log(err);
-            this.history.push("/login");
-            this.history.go(0);
+            signOutUserOnException(err, this.history);
         }        
     }
 
@@ -75,9 +70,7 @@ export default class Blockchain {
             });
             return response;
         } catch(err) {
-            console.log(err);
-            this.history.push("/login");
-            this.history.go(0);
+            signOutUserOnException(err, this.history);
         }        
     }
 
@@ -90,9 +83,20 @@ export default class Blockchain {
             });
             return response;
         } catch(err) {
-            console.log(err);
-            this.history.push("/login");
-            this.history.go(0);
+            signOutUserOnException(err, this.history);
+        }        
+    }
+
+    async createNewRequest(payload) {
+        try {
+            const response = await AxiosInstance.post("/api/create_request", payload, {
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
+            });
+            return response;
+        } catch(err) {
+            signOutUserOnException(err, this.history);
         }        
     }
 }

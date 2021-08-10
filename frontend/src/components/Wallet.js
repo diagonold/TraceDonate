@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setNotLoggedIn } from '../redux/reducers/loggedInReducer';
 import { setWalletModalClosed } from '../redux/reducers/walletModalReducer';
 import Modal from 'react-modal';
 import LocalStorageUtil from '../utils/LocalStorage';
@@ -10,7 +9,7 @@ import BlockchainServices from '../services/Blockchain';
 
 const customStyles = {
     content: {
-      top: '30%',
+      top: '25%',
       left: '50%',
       right: 'auto',
       bottom: 'auto',
