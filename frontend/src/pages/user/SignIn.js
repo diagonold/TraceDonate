@@ -1,6 +1,7 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn } from '../../redux/reducers/loggedInReducer';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../redux/reducers/loadingSpinnerOverlayReducer';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useHistory } from 'react-router-dom';
@@ -10,6 +11,7 @@ import LocalStorageutil from '../../utils/LocalStorage';
 import WelcomeTitles from '../../components/WelcomeTitles';
 
 import { signInSchema } from '../../schema/User';
+import LoadingSpinnerOverlay from '../../components/LoadingSpinnerOverlay';
 
 const authServices = new AuthServices();
 
@@ -26,19 +28,24 @@ export default function SignIn() {
 
 	const history = useHistory();
 
+	const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
+
 	const onSubmitLogin = async (payload) => {
 		try {
+			dispatch(setLoadingSpinnerOverlayShown());
 			const response = await authServices.login(payload);
 			if (response.status === 200) {
 				const token = response.data.token;
 				const username = response.data.username;
 				LocalStorageutil.create("token", token);
 				LocalStorageutil.create("TraceDonateUsername", username);
+				dispatch(setLoadingSpinnerOverlayNotShown());
 				dispatch(setLoggedIn());
 				history.push("/");
 				history.go(0);
 			}
 		} catch(err) {
+			dispatch(setLoadingSpinnerOverlayNotShown());
 			alert("Error signning in");
 		}
 	}
@@ -65,6 +72,9 @@ export default function SignIn() {
 				<br/>
 				<input className="btn btn-primary" type="submit" value="Sign In" />
         	</form>
+			{ loadingSpinnerOverlay && (
+				<LoadingSpinnerOverlay />
+			)}
         </div>
 		</>
     );

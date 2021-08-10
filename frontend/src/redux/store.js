@@ -6,6 +6,7 @@ import ProjectModalReducer from './reducers/projectModalReducer';
 import DonationThankYouModalReducer from './reducers/donationThankYouModalReducer';
 import CreateNewProjectModalReducer from './reducers/createNewProjectModalReducer';
 import CreateNewRequestModalReducer from './reducers/createNewRequestModalReducer';
+import LoadingSpinnerOverlayReducer from './reducers/loadingSpinnerOverlayReducer';
 
 export default configureStore({
     reducer: {
@@ -15,6 +16,7 @@ export default configureStore({
         projectModal: ProjectModalReducer,
         donationThankYouModal: DonationThankYouModalReducer,
         createNewProjectModal: CreateNewProjectModalReducer,
-        createNewRequestModal: CreateNewRequestModalReducer
+        createNewRequestModal: CreateNewRequestModalReducer,
+        loadingSpinnerOverlay: LoadingSpinnerOverlayReducer
     }
 })

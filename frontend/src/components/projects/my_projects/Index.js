@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setNotLoggedIn } from '../../../redux/reducers/loggedInReducer';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../../redux/reducers/loadingSpinnerOverlayReducer';
 import { useHistory } from 'react-router-dom';
 import { setCreateNewProjectModalOpened } from '../../../redux/reducers/createNewProjectModalReducer';
 import { setCreateNewRequestModalOpened } from '../../../redux/reducers/createNewRequestModalReducer'; 
@@ -11,30 +12,37 @@ import BlockchainServices from '../../../services/Blockchain';
 import LocalStorageUtil from '../../../utils/LocalStorage';
 
 import '../../../styles/blockchain/project.css';
+import LoadingSpinnerOverlay from '../../LoadingSpinnerOverlay';
 
 export default function Index() {
 
     const dispatch = useDispatch();
     const history = useHistory();
 
+    const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
+
     useEffect(() => {
         (async () => {
+            dispatch(setLoadingSpinnerOverlayShown());
             const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
             const response = await blockchainServices.getProjects();
             if (response && response.status === 200) {
                 let myProjects = [];
                 let unfilteredProjects = response.data.projects;
                 for (let project of unfilteredProjects) {
-                    if (project.owner === LocalStorageUtil.read("TraceDonateUsername")) {
+                    if (project.owner === LocalStorageUtil.read("TraceDonateWallet")) {
                         myProjects.push(project);
                     }
                 }
                 setProjects(myProjects);
                 setProjectsCopy(myProjects);
+                dispatch(setLoadingSpinnerOverlayNotShown());
             } else {
                 dispatch(setNotLoggedIn());
                 LocalStorageUtil.remove("token");
                 LocalStorageUtil.remove("TraceDonateUsername");
+                LocalStorageUtil.remove("TraceDonateWallet");
+                dispatch(setLoadingSpinnerOverlayNotShown());
                 history.push("/login");
                 history.go(0);
             }
@@ -75,6 +83,9 @@ export default function Index() {
             </div>
             </div>
             <div className="col">
+            { !loadingSpinnerOverlay 
+            ?
+            <>
             { projectsCopy.length > 0 ?
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
@@ -88,6 +99,10 @@ export default function Index() {
                 </div>
                 :
                 <div className="my-5"></div>
+            }
+            </>
+            :
+            <LoadingSpinnerOverlay />
             }
             <div className="container-md">
                 <p className="text-start">{projects.length} Projects Available</p>
