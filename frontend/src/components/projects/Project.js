@@ -24,8 +24,8 @@ export default function Project({ project }) {
 
      const history = useHistory();
 
-     const [ currentDonationAmount, setCurrentDonationAmount ] = useState(0);
-     const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(false);
+     const [ currentDonationAmount, setCurrentDonationAmount ] = useState(minDonation);
+     const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(true);
 
      const donateToProject = async () => {
          const donationAmount = parseInt(document.getElementById(`donationAmount_${owner}`).value);
@@ -64,8 +64,8 @@ export default function Project({ project }) {
             { owner !== LocalStorageUtil.read("TraceDonateWallet") && (
             <div className="container-sm d-flex justify-content-end">
                 <input type="number" id={`donationAmount_${owner}`} value={currentDonationAmount} onChange={(e) => {
-                    setCurrentDonationAmount(e.target.value);
-                    if (parseInt(currentDonationAmount) > 0) {
+                    setCurrentDonationAmount(parseInt(e.target.value) || minDonation);
+                    if (currentDonationAmount >= minDonation) {
                         setNonEmptyDonationAmount(true);
                     } else {
                         setNonEmptyDonationAmount(false);
