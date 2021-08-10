@@ -118,18 +118,10 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
 @app.get("/api/projects", status_code=200, responses={
     401: {"description": "Invalid Token"}})
 def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
-    """
-   0 address _owner,
-   1 string memory _description,
-   2 uint _minDonation,
-   3 uint _raisedDonation,
-   4 uint _goal,
-   5 uint _numberOfDonors,
-   6 uint _numRequests
-    """
+
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        # user_name = auth_handler.decode_token(token)['username'].strip()
+        user = auth_handler.decode_token(token)
         projects_addy_ls = database_utils.get_all_project_addy()
         projects_ls = []
         for each_addy in projects_addy_ls:
@@ -142,20 +134,22 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
                                     'recipient': request_detail[2],
                                     'completed': request_detail[3],
                                     'request_id': index,
-                                    'voted': False,
+                                    'voted': database_utils.is_request_voted(user['username'],
+                                                                             each_addy,
+                                                                             index),
                                     'num_of_vote': request_detail[4]
                                     })
             projects_ls.append({
-                'project_name': 'fake name',
+                'project_name': project_details[1],
                 'project_addy': each_addy,
                 'owner': project_details[0],
                 'participated': False,
-                'description': project_details[1],
-                'minDonation': project_details[2],
-                'raisedDonation': project_details[3],
-                'goal': project_details[4],
-                'numberOfDonors': project_details[5],
-                'numRequests': project_details[6],
+                'description': project_details[2],
+                'minDonation': project_details[3],
+                'raisedDonation': project_details[4],
+                'goal': project_details[5],
+                'numberOfDonors': project_details[6],
+                'numRequests': project_details[7],
                 'donations': {},
                 'requests': requests_ls
             })
@@ -281,11 +275,19 @@ def make_payment(make_payment_form: MakePaymentForm,
                  credentials: HTTPAuthorizationCredentials = Security(security)):
     token = credentials.credentials
     if auth_handler.decode_token(token):
-        print('Make payment to request %s of project %s'
-              % (make_payment_form.request_index, make_payment_form.project_addy))
+        user = auth_handler.decode_token(token)
+        try:
+            blockchain_utils.make_payment(user['wallet'], user['private_key'], make_payment_form)
+        except Exception as err:
+            print(err)
+            traceback.print_exc()
+            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": err})
+        else:
+            print('Make payment to request %s of project %s'
+                  % (make_payment_form.request_index, make_payment_form.project_addy))
 
-        return JSONResponse(status_code=status.HTTP_201_CREATED,
-                            content={"msg": 'Make payment to request %s of project %s'
+            return JSONResponse(status_code=status.HTTP_201_CREATED,
+                                content={"msg": 'Make payment to request %s of project %s'
                                             % (make_payment_form.request_index, make_payment_form.project_addy)})
 
 

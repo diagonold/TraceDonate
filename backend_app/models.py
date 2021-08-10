@@ -17,6 +17,7 @@ class VoteForm(BaseModel):
 
 
 class CreateProjectForm(BaseModel):
+    project_name: str
     description: str
     min_donation_amount: int
     goal: int

@@ -4,7 +4,7 @@ from models import *
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-projectHub_address = '0xcD0eE79169A09fc83b04d6116Fb453D85610F2B9'
+projectHub_address = '0x6272B49407CCFf6E9a42b2D8A227141ab33d714c'
 
 
 def create_account():
@@ -66,9 +66,11 @@ def create_project(from_addy, from_key, create_project_form: CreateProjectForm):
     abi = get_abi_from_json('../build/contracts/ProjectHub.json')
     contract = web3.eth.contract(address=projectHub_address, abi=abi)
     nonce = web3.eth.getTransactionCount(from_addy)
-    txn = contract.functions.create_project(create_project_form.description,
-                                            create_project_form.min_donation_amount,
-                                            create_project_form.goal).buildTransaction({
+    txn = contract.functions.create_project(create_project_form.project_name,
+                                            create_project_form.description,
+                                            web3.toWei(create_project_form.min_donation_amount, 'ether'),
+                                            web3.toWei(create_project_form.goal, 'ether')
+                                            ).buildTransaction({
         'nonce': nonce,
         'gas': 2000000,
         'gasPrice': web3.toWei('50', 'gwei'),
@@ -100,10 +102,24 @@ def get_all_projects():
 
 
 def get_project_summary(project_addy):
+    """
+   0 _name = name;
+   1 _owner = owner;
+   2 _description = description;
+   3 _minDonation = minDonation;
+   4 _raisedDonation = raisedDonation;
+   5 _goal = goal;
+   6 _numberOfDonors = numberOfDonors;
+   7 _numRequests = numRequests;
+    """
     abi = get_abi_from_json('../build/contracts/Project.json')
     contract = web3.eth.contract(address=project_addy, abi=abi)
     project_details = contract.functions.get_summary().call()
+    # Change wei to ether
     project_details[3] = int(web3.fromWei(project_details[3], 'ether'))
+    project_details[4] = int(web3.fromWei(project_details[4], 'ether'))
+    project_details[5] = int(web3.fromWei(project_details[5], 'ether'))
+    print(project_details)
     return project_details
 
 
@@ -114,8 +130,9 @@ def create_request(owner_addy, owner_key, create_request_form: CreateRequestForm
     # contract.functions.create_request(request_details, '0x3d6924A60Bd4548621FBdEE9E7367F548EC4C2ab',
     #                                   web3.toWei(10, 'ether')).transact()
 
-    txn = contract.functions.create_request(create_request_form.description, create_request_form.receiver_addy,
-                                            web3.toWei(create_request_form.amount, 'ether')).buildTransaction({
+    txn = contract.functions.create_request(create_request_form.description,
+                                            create_request_form.receiver_addy,
+                                            web3.toWei(10, 'ether')).buildTransaction({
         'nonce': nonce,
         'gas': 2000000,
         'gasPrice': web3.toWei('50', 'gwei'),
@@ -126,12 +143,12 @@ def create_request(owner_addy, owner_key, create_request_form: CreateRequestForm
     print(web3.toHex(txn_hash))
 
 
-def make_payment(owner_addy, owner_key, project_addy, request_index):
+def make_payment(owner_addy, owner_key, make_payment_form: MakePaymentForm):
     abi = get_abi_from_json('../build/contracts/Project.json')
-    contract = web3.eth.contract(address=project_addy, abi=abi)
+    contract = web3.eth.contract(address=make_payment_form.project_addy, abi=abi)
     nonce = web3.eth.getTransactionCount(owner_addy)
 
-    txn = contract.functions.make_payment(request_index).buildTransaction({
+    txn = contract.functions.make_payment(make_payment_form.request_index).buildTransaction({
         'nonce': nonce,
         'gas': 2000000,
         'gasPrice': web3.toWei('50', 'gwei'),
@@ -197,12 +214,18 @@ if __name__ == '__main__':
     #
     # print(get_project_summary('0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363'))
     #
-    # create_request('0xeF75AF9f3999e3BA5A0AdC46D9e7eD29d8D5f9A5',
-    #                'eac7e0ef8ec7424da7099bce12be2d0fcc1b2d813a1fede1f8cda437bd4ff921',
-    #                '0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363',
-    #                'test-request')
+    f = CreateRequestForm
+    f.project_addy = '0xAcCa2cB2745699205880C8980EB83A75D1092af4'
+    f.receiver_addy = '0xa04451ce8ab489D83936ea949ee435c9176A310A'
+    f.amount = 5
+    f.description = 'request test'
+
+    create_request(
+        '0x35C799bD2Be5db39E02cCcbd07b3526a427fd87A',
+        '606bd2d104db5920376e6dce935ac0bf1e4bb0bcc573e9d441ef579df8231151',
+        f)
     #
-    print(get_project_summary('0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363'))
+    print(get_project_summary('0xAcCa2cB2745699205880C8980EB83A75D1092af4'))
     # vote_request(
     #             '0x3d6924A60Bd4548621FBdEE9E7367F548EC4C2ab',
     #             'e5cd5de6d951ca1afc8349f733db5ca4b71069b9ac0f63e2045b2b0a1ec8e6e1',
@@ -215,7 +238,7 @@ if __name__ == '__main__':
     #              '0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363',
     #              0)
     # get_request_details('0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363', 0)
-    get_all_requests('0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363')
+    # get_all_requests('0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363')
     # contribute_to('0x7aFAEa96DDaB899748D65dD06b5607e5CeB71876',
     #              '09b597e6549cf30c7d2406020037ef88a5732e752e0e227f209e1c89b02fef2d',
     #              '0xE21F654fd652A82521a67b440C2fe443da9bd967',
