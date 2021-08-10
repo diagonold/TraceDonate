@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import './App.css';
 import NavBar from './components/header/NavBar';
 import Main from './pages/index';
-import LocalStorage from './utils/LocalStorage';
+import { useSelector } from 'react-redux';
 
 function App() {
 

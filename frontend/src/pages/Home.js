@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLoggedIn, setNotLoggedIn } from '../redux/reducers/loggedInReducer';
 import { useHistory } from 'react-router-dom';
@@ -19,8 +19,6 @@ export default function Home() {
 	const history = useHistory();
 
 	const dispatch = useDispatch();
-
-	const loggedIn = useSelector((state) => state.loggedIn.value)
 
 	const page = useSelector((state) => state.page.value);
 
@@ -44,11 +42,17 @@ export default function Home() {
 					if (response.status === 200) {
 						dispatch(setLoggedIn());
 						console.log("Active session");
+						const myWallet = await blockchainServices.getWallet();
+						if (myWallet.status === 200) {
+							LocalStorageUtil.create("TraceDonateWallet", myWallet.data.wallet);
+						}
 					} 
 				} catch(err) {
 					dispatch(setNotLoggedIn());
 					console.log("No active session");
 					LocalStorageUtil.remove("token");
+					LocalStorageUtil.remove("TraceDonateUsername");
+					LocalStorageUtil.remove("TraceDonateWallet");
 					history.push("/login");
 					history.go(0);
 				} 

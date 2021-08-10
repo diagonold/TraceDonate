@@ -1,28 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setNotLoggedIn } from '../../redux/reducers/loggedInReducer';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../redux/reducers/loadingSpinnerOverlayReducer';
 import { useHistory } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import Transaction from './Transaction';
 
 import BlockchainServices from '../../services/Blockchain';
 import LocalStorageUtil from '../../utils/LocalStorage';
+import LoadingSpinnerOverlay from '../LoadingSpinnerOverlay';
 
 export default function Index() {
 
     const dispatch = useDispatch();
     const history = useHistory();
 
+    const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
+
     useEffect(() => {
         (async () => {
+            dispatch(setLoadingSpinnerOverlayShown());
             const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
             const response = await blockchainServices.getTransactions();
             if (response && response.status === 200) {
                 setTransactions(response.data.transactions);
+                dispatch(setLoadingSpinnerOverlayNotShown());
             } else {
                 dispatch(setNotLoggedIn());
                 LocalStorageUtil.remove("token");
                 LocalStorageUtil.remove("TraceDonateUsername");
+                LocalStorageUtil.remove("TraceDonateWallet");
+                dispatch(setLoadingSpinnerOverlayNotShown());
                 history.push("/login");
                 history.go(0);
             }
@@ -61,9 +69,16 @@ export default function Index() {
                 />
             </div>
             <div className="container-md">
+            { !loadingSpinnerOverlay
+            ?
+            <>
             { allTransactions.map((transaction, key) => {
                 return <Transaction transaction={transaction} key={key} />
             }) }
+            </>
+            :
+            <LoadingSpinnerOverlay />
+            }
             </div>
         </>
     );

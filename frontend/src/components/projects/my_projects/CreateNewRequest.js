@@ -96,9 +96,9 @@ export default function CreateNewRequest() {
                 <div className="mb-3 text-start">
                     <label className="text-dark form-label">Project Address: </label>
                     <select className="form-select" {...register("project_addy")}>
+                        <option value="" disabled selected>Select your option</option>
                         { projects.map((project, key) => {
-                            <option value="" disabled selected>Select your option</option>
-                            if (project.owner !== LocalStorageUtil.read("TraceDonateUsername")) {
+                            if (project.owner !== LocalStorageUtil.read("TraceDonateWallet")) {
                                 return <option value={project.owner} key={key}>{project.owner}</option>
                             }
                         }) }
@@ -115,9 +115,9 @@ export default function CreateNewRequest() {
                 <div className="mb-3 text-start">
                     <label className="text-dark form-label">Receiver Address: </label>
                     <select className="form-select" {...register("receiver_addy")}>
+                        <option value="" disabled selected>Select your option</option>
                         { projects.map((project, key) => {
-                            <option value="" disabled selected>Select your option</option>
-                            if (project.owner !== LocalStorageUtil.read("TraceDonateUsername")) {
+                            if (project.owner !== LocalStorageUtil.read("TraceDonateWallet")) {
                                 return <option value={project.owner} key={key}>{project.owner}</option>
                             }
                         }) }
