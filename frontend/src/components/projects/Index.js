@@ -100,7 +100,7 @@ export default function Index() {
             { !loadingSpinnerOverlay 
             ?
             <>
-            { projectsCopy.length > 0 && (
+            { projectsCopy.length > 0 ?
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
                         activePage={activePage}
@@ -111,7 +111,9 @@ export default function Index() {
                         onChange={handlePageChange}     
                     />
                 </div>
-            )}
+                :
+                <div className="my-5"></div>
+            }
             </>
             :
             <LoadingSpinnerOverlay />
