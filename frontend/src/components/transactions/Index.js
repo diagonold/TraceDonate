@@ -58,6 +58,7 @@ export default function Index() {
     
     return (
         <>
+            { transactions.length > 0 ?
             <div className="d-flex justify-content-center mt-4">
                 <Pagination
                     activePage={activePage}
@@ -68,6 +69,11 @@ export default function Index() {
                     onChange={handlePageChange}     
                 />
             </div>
+            :
+            <div className="my-5">
+                <p>No Transaction Recorded</p>
+            </div>
+            }
             <div className="container-md">
             { !loadingSpinnerOverlay
             ?
