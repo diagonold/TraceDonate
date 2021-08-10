@@ -12,7 +12,7 @@ contract Project{
     uint public numberOfDonors;
     mapping (address => uint) public donations; // stores the donation of each donor
     uint numRequests;
-    Request[] public requests;
+    mapping (uint => Request) requests;
     
     // For each spending request, need to create a new instance of request
     struct Request {
@@ -42,12 +42,12 @@ contract Project{
         _;
     }
     
-    constructor( string memory _name, string memory _description, uint _minDonation, uint _goal) public {
+    constructor( string memory _name, string memory _description, uint _minDonation, uint _goal, address _owner) public {
         name = _name;
         description = _description;
         minDonation = _minDonation;
         goal = _goal;
-        owner = msg.sender; // The creator of the project is the owner of the project
+        owner = _owner; // The creator of the project is the owner of the project
         numRequests = 0;
     }
     
@@ -162,7 +162,7 @@ contract ProjectHub {
     
     function create_project(string memory _name, string memory _description, uint _minDonation, uint _goal ) public payable {
     // Create a new project, need to provide all the necessary attributes for that project
-        Project project = new Project(_name, _description, _minDonation, _goal);
+        Project project = new Project(_name, _description, _minDonation, _goal, msg.sender);
         projects.push(project);
         emit ProjectCreated( address(project), _name, _description, _minDonation, _goal);
     }
