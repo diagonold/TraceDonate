@@ -61,6 +61,7 @@ export default function Project({ project }) {
             <p>{raisedDonation} / {minDonation}</p>
             <p>{numberOfDonors} Donor(s)</p>
             </div>
+            { owner !== LocalStorageUtil.read("TraceDonateWallet") && (
             <div className="container-sm d-flex justify-content-end">
                 <input type="number" id={`donationAmount_${owner}`} value={currentDonationAmount} onChange={(e) => {
                     setCurrentDonationAmount(e.target.value);
@@ -78,6 +79,7 @@ export default function Project({ project }) {
                 <button type="button" className="btn btn-outline-light" disabled>Donate</button>
                 }
             </div>
+            )}
         </div>
     );
 }

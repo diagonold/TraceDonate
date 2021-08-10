@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../redux/reducers/loadingSpinnerOverlayReducer';
 import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,12 +9,17 @@ import AuthServices from '../../services/Auth';
 import { signUpSchema } from '../../schema/User';
 
 import WelcomeTitles from '../../components/WelcomeTitles';
+import LoadingSpinnerOverlay from '../../components/LoadingSpinnerOverlay';
 
 const authServices = new AuthServices();
 
 export default function SignUp() {
 
 	const history = useHistory();
+
+	const dispatch = useDispatch();
+
+	const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
 
 	const {
 		register,
@@ -23,13 +30,16 @@ export default function SignUp() {
     
     const onSubmitRegister = async (payload) => {
         try {
+			dispatch(setLoadingSpinnerOverlayShown());
 			const response = await authServices.register(payload);
 			if (response.status === 201) {
+				dispatch(setLoadingSpinnerOverlayNotShown());
 				alert("Successfully registering new account")
 				history.push("/login");
 			}
         } catch(err) {
             console.log(err);
+			dispatch(setLoadingSpinnerOverlayNotShown())
             alert("Error registering new account, please try again!");
         } finally {
 			history.go(0);
@@ -66,6 +76,9 @@ export default function SignUp() {
 				<br/>
 				<input className="btn btn-primary" type="submit" value="Sign Up" />
         	</form>
+			{ loadingSpinnerOverlay && (
+				<LoadingSpinnerOverlay />
+			)}
         </div>
 		</>
     );

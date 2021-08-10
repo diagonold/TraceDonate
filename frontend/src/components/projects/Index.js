@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setNotLoggedIn } from '../../redux/reducers/loggedInReducer';
+import { setLoadingSpinnerOverlayShown, setLoadingSpinnerOverlayNotShown } from '../../redux/reducers/loadingSpinnerOverlayReducer';
 import { useHistory } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import Project from './Project';
@@ -9,23 +10,30 @@ import BlockchainServices from '../../services/Blockchain';
 import LocalStorageUtil from '../../utils/LocalStorage';
 
 import '../../styles/blockchain/project.css';
+import LoadingSpinnerOverlay from '../LoadingSpinnerOverlay';
 
 export default function Index() {
 
     const dispatch = useDispatch();
     const history = useHistory();
 
+    const loadingSpinnerOverlay = useSelector((state) => state.loadingSpinnerOverlay.value);
+
     useEffect(() => {
         (async () => {
             const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
+            dispatch(setLoadingSpinnerOverlayShown());
             const response = await blockchainServices.getProjects();
             if (response && response.status === 200) {
                 setProjects(response.data.projects);
                 setProjectsCopy(response.data.projects);
+                dispatch(setLoadingSpinnerOverlayNotShown());
             } else {
                 dispatch(setNotLoggedIn());
                 LocalStorageUtil.remove("token");
                 LocalStorageUtil.remove("TraceDonateUsername");
+                LocalStorageUtil.remove("TraceDonateWallet");
+                dispatch(setLoadingSpinnerOverlayNotShown());
                 history.push("/login");
                 history.go(0);
             }
@@ -89,6 +97,9 @@ export default function Index() {
                 </div>
             </div>
             <div className="col">
+            { !loadingSpinnerOverlay 
+            ?
+            <>
             { projectsCopy.length > 0 && (
                 <div className="d-flex justify-content-center mt-4">
                     <Pagination
@@ -101,6 +112,10 @@ export default function Index() {
                     />
                 </div>
             )}
+            </>
+            :
+            <LoadingSpinnerOverlay />
+            }
             <div className="container-md">
                 <p className="text-start">{projects.length} Projects Available</p>
             </div>
