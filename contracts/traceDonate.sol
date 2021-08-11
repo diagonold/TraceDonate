@@ -68,7 +68,13 @@ contract Project{
     }
     
     // Project owner creates a request before he can spend his money
-    function create_request( string memory _requestDescription, address payable _recipient, uint _value) public onlyAdmin goalReached{
+    function create_request( string memory _requestDescription, address payable _recipient, uint _value) public onlyAdmin {
+        // Check request is legit
+        require( _value <= raisedDonation);
+
+        // Freeze requested money
+        raisedDonation -= _value;
+
         // instantiating a request struct in memory
         // Store request struct variable from mapping in storage
         Request storage newRequest = requests[numRequests++];
@@ -77,6 +83,7 @@ contract Project{
         newRequest.recipient = _recipient;
         newRequest.yesVotes = 0;
         newRequest.completed = false;
+
         emit CreateRequest( msg.sender, _recipient, _requestDescription, _value);
     }
     
