@@ -149,6 +149,23 @@ def is_request_voted(username, project_addy, request_index):
         return len(res) > 0
 
 
+def is_participated_in_project(username, project_addy):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    SELECT *
+                    FROM account a
+                    LEFT JOIN transactions t
+                    ON a.id = t.account_id 
+                    WHERE  a.username = (?)
+                    AND t.to_addy =(?)
+                    """,
+                    (username, project_addy))
+        res = cur.fetchall()
+        print(len(res))
+        return len(res) > 0
+
+
 if __name__ == '__main__':
     ...
     # print(user_exist('a'))
@@ -163,6 +180,5 @@ if __name__ == '__main__':
     # vote_request('string',
     #              '0xebF2E1C8814d94B301a248ee0d2a448E385F3744',
     #              0)
-    is_request_voted('string',
-                     '0xebF2E1C8814d94B301a248ee0d2a448E385F3744',
-                     0)
+    a = is_participated_in_project('test', '0x6488533De7bd7e2D1CB725e94A6BA37d741942ae')
+    print(a)
