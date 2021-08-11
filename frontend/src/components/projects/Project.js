@@ -11,6 +11,7 @@ export default function Project({ project }) {
 
     const {
         owner,
+        owner_username,
         description,
         minDonation,
         raisedDonation,
@@ -57,7 +58,10 @@ export default function Project({ project }) {
                 "requests": requests,
                 "project_address": project_addy
             }))}>
+            <p>Project Owner: {owner_username}</p>
+            <p>Project Address: {project_addy}</p>
             <p>Project Name: {project_name}</p>
+
             <hr/>
             <p>Project Description: {description}</p>
             <p>Target Donation: {goal} ETH</p>
