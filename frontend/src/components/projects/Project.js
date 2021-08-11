@@ -28,11 +28,11 @@ export default function Project({ project }) {
      const history = useHistory();
 
      const [ currentDonationAmount, setCurrentDonationAmount ] = useState(minDonation);
-     const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(false);
+     const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(true);
 
      const donateToProject = async () => {
          const donationAmount = parseInt(document.getElementById(`donationAmount_${project_addy}`).value);
-         if (isNaN(donationAmount) || donationAmount === minDonation) { setNonEmptyDonationAmount(false); return };
+         if (isNaN(donationAmount) || donationAmount < minDonation) { setNonEmptyDonationAmount(false); return };
          const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
          const response = await blockchainServices.donate({
              "project_addy": project_addy,
