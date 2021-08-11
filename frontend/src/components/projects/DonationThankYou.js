@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDonationThankYouModalClosed } from '../../redux/reducers/donationThankYouModalReducer';
 import Modal from 'react-modal';
@@ -23,9 +24,12 @@ export default function DonationThankYou() {
   const dispatch = useDispatch();
   const modal = useSelector((state) => state.donationThankYouModal.opened);
   const details = useSelector((state) => state.donationThankYouModal.data);
+
+  const history = useHistory();
   
   const closeModal = () => {
     dispatch(setDonationThankYouModalClosed());
+    history.go(0);
   }
   
     return (
