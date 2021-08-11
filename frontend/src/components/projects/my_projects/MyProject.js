@@ -31,11 +31,12 @@ export default function MyProject({ project }) {
                 "requests": requests,
                 "project_address": project_addy
             }))}>
-            <p>{project_name}</p>
+            <p>Project Name: {project_name}</p>
             <hr/>
-            <p>{description}</p>
-            <p>Target Doantion: {goal}</p>
-            <p>{raisedDonation} / {minDonation}</p>
+            <p>Project Description: {description}</p>
+            <p>Target Donation: {goal} ETH</p>
+            <p>Raised Donation: {raisedDonation} ETH</p>
+            <p>Min Donation: {minDonation} ETH</p>
             <p>{numberOfDonors} Donor(s)</p>
             </div>
         </div>
