@@ -77,10 +77,14 @@ export default function Project({ project }) {
                 }}/>
                 &nbsp;
                 &nbsp;
-                { nonEmptyDonationAmount ? 
-                <button type="button" className="btn btn-primary" onClick={donateToProject}>Donate</button>
-                :
-                <button type="button" className="btn btn-outline-light" disabled>Donate</button>
+                { !participated && (
+                    <>
+                    { nonEmptyDonationAmount ? 
+                    <button type="button" className="btn btn-primary" onClick={donateToProject}>Donate</button>
+                    :
+                    <button type="button" className="btn btn-outline-light" disabled>Donate</button>
+                    }
+                    </>)
                 }
             </div>
             )}
