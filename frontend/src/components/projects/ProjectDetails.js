@@ -49,10 +49,12 @@ export default function ProjectDetails() {
   const details = useSelector((state) => state.projectModal.data);
 
   const [ voted, setVoted ] = useState(false);
+
+  const [ justPaid, setJustPaid ] = useState(false);
   
   const closeModal = () => {
     dispatch(setProjectModalClosed());
-    if (voted) {
+    if (voted || justPaid) {
       history.go(0);
     }
   }
@@ -65,7 +67,21 @@ export default function ProjectDetails() {
     });
     if (response.status === 201) {
       setVoted(true);
+      closeModal();
     }
+  }
+
+  const payForRequest = async (project_address, request_id) => {
+    const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
+    const response = await blockchainServices.makePayment({
+      "project_addy": project_address,
+      "request_index": parseInt(request_id)
+    });
+    if (response.status === 201) {
+      console.log("ok");
+      setJustPaid(true);
+      closeModal();
+    }   
   }
 
   const ProjectRequest = ({ request, project_address }) => {
@@ -84,7 +100,7 @@ export default function ProjectDetails() {
               <div className={`p-2 w-25 text-light text-center bg-gradient ${completed ? "bg-success" : "bg-danger"}`}>
                 { completed ? "Completed" : "Uncompleted" }
               </div>
-              { completed && project_address !== LocalStorageUtil.read("TraceDonateUsername") && (
+              { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && (
                 <div className="p-2 w-25 text-dark text-center bg-warning bg-gradient">Votable</div>
               )}
               </div>
@@ -97,6 +113,9 @@ export default function ProjectDetails() {
               )}
               { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && voted && (
                 <button type="button" className="btn btn-outline-secondary text-secondary" disabled>You Voted For This Request</button>
+              )}
+              { !completed && project_address === LocalStorageUtil.read("TraceDonateWallet") && (
+                <button type="button" className="btn btn-primary text-light" onClick={async () => await payForRequest(project_address, request_id)}>Make Payment</button>
               )}
               </div>
           </div>
