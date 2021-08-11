@@ -217,6 +217,8 @@ def donate(donate_form: DonateForm, credentials: HTTPAuthorizationCredentials = 
         # {"username": res[0][0], "wallet": res[0][1], "password": res[0][2], "private_key": res[0][3]}
         user = auth_handler.decode_token(token)
         try:
+            print(donate_form)
+            print(user)
             blockchain_utils.contribute_to(user['wallet'], user['private_key'],
                                            donate_form.project_addy, donate_form.amount)
         except Exception as err:

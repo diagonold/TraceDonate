@@ -4,7 +4,7 @@ from models import *
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-projectHub_address = '0x6272B49407CCFf6E9a42b2D8A227141ab33d714c'
+projectHub_address = '0x4d205524C3D73f9E73624aFB2AE6778ebB38D24e'
 
 
 def create_account():
@@ -204,28 +204,29 @@ if __name__ == '__main__':
     # create_project('0xeF75AF9f3999e3BA5A0AdC46D9e7eD29d8D5f9A5',
     #                'eac7e0ef8ec7424da7099bce12be2d0fcc1b2d813a1fede1f8cda437bd4ff921',
     #                f)
+    print(get_project_summary('0x230128dC244F1bAA37Cec5Da1203Bfee00998e56'))
 
-    # contribute_to('0x3d6924A60Bd4548621FBdEE9E7367F548EC4C2ab',
-    #               'e5cd5de6d951ca1afc8349f733db5ca4b71069b9ac0f63e2045b2b0a1ec8e6e1',
-    #               '0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363',
-    #               10)
+    contribute_to('0xEF5CBC5CF3F3b90E398689E76EF3fa1A6D7E6AA2',
+                  '49e1e23e19ceb99fe57e034faccbd2213a54e61655c6da03c3eecc6af3eed13b',
+                  '0x230128dC244F1bAA37Cec5Da1203Bfee00998e56',
+                  2)
 
     # print(get_all_projects())
     #
-    # print(get_project_summary('0x8e201FF06f609cdB58EE3C8eeb2315Aa116a9363'))
+    print(get_project_summary('0x230128dC244F1bAA37Cec5Da1203Bfee00998e56'))
     #
-    f = CreateRequestForm
-    f.project_addy = '0xAcCa2cB2745699205880C8980EB83A75D1092af4'
-    f.receiver_addy = '0xa04451ce8ab489D83936ea949ee435c9176A310A'
-    f.amount = 5
-    f.description = 'request test'
-
-    create_request(
-        '0x35C799bD2Be5db39E02cCcbd07b3526a427fd87A',
-        '606bd2d104db5920376e6dce935ac0bf1e4bb0bcc573e9d441ef579df8231151',
-        f)
+    # f = CreateRequestForm
+    # f.project_addy = '0xAcCa2cB2745699205880C8980EB83A75D1092af4'
+    # f.receiver_addy = '0xa04451ce8ab489D83936ea949ee435c9176A310A'
+    # f.amount = 5
+    # f.description = 'request test'
     #
-    print(get_project_summary('0xAcCa2cB2745699205880C8980EB83A75D1092af4'))
+    # create_request(
+    #     '0x35C799bD2Be5db39E02cCcbd07b3526a427fd87A',
+    #     '606bd2d104db5920376e6dce935ac0bf1e4bb0bcc573e9d441ef579df8231151',
+    #     f)
+    # #
+    # print(get_project_summary('0xAcCa2cB2745699205880C8980EB83A75D1092af4'))
     # vote_request(
     #             '0x3d6924A60Bd4548621FBdEE9E7367F548EC4C2ab',
     #             'e5cd5de6d951ca1afc8349f733db5ca4b71069b9ac0f63e2045b2b0a1ec8e6e1',
