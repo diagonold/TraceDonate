@@ -7,7 +7,10 @@ const projectModalSlice = createSlice({
         data: {
             donations: {},
             requests: [],
-            project_address: ""
+            project_address: "",
+            owner: "",
+            raisedDonation: 0,
+            participated: false
         }
     },
     reducers: {
