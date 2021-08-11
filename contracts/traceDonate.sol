@@ -55,7 +55,7 @@ contract Project{
         // A payable function will store the value that is sent to that account
         // and will be trapped there unless there is a withdraw function
         // Conditions for executing the rest of the function
-        require( msg.value > minDonation);
+        require( msg.value >= minDonation);
         // Checking whether this is the first time the person is contributing
         if(donations[msg.sender] == 0){
             // If its his first time, need to invrement the total number of contributors
