@@ -74,6 +74,19 @@ export default class Blockchain {
         }        
     }
 
+    async makePayment(payload) {
+        try {
+            const response = await AxiosInstance.post("/api/make_payment", payload, {
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
+            });
+            return response;
+        } catch(err) {
+            signOutUserOnException(err, this.history);
+        }        
+    }
+
     async createNewProject(payload) {
         try {
             const response = await AxiosInstance.post("/api/create_project", payload, {
