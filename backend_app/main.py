@@ -134,7 +134,7 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
                                     'recipient': request_detail[2],
                                     'completed': request_detail[3],
                                     'request_id': index,
-                                    'ready_payment': False,
+                                    'ready_payment': request_detail[4] > project_details[6]/2,
                                     'voted': database_utils.is_request_voted(user['username'],
                                                                              each_addy,
                                                                              index),
