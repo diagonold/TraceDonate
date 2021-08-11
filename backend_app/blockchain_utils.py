@@ -4,7 +4,7 @@ from models import *
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-projectHub_address = '0x4d205524C3D73f9E73624aFB2AE6778ebB38D24e'
+projectHub_address = '0x9C8d406CB8C7275e9284A56cd66761821c7E0D54'
 
 
 def create_account():
@@ -132,7 +132,7 @@ def create_request(owner_addy, owner_key, create_request_form: CreateRequestForm
 
     txn = contract.functions.create_request(create_request_form.description,
                                             create_request_form.receiver_addy,
-                                            web3.toWei(10, 'ether')).buildTransaction({
+                                            web3.toWei(create_request_form.amount, 'ether')).buildTransaction({
         'nonce': nonce,
         'gas': 2000000,
         'gasPrice': web3.toWei('50', 'gwei'),
@@ -204,16 +204,16 @@ if __name__ == '__main__':
     # create_project('0xeF75AF9f3999e3BA5A0AdC46D9e7eD29d8D5f9A5',
     #                'eac7e0ef8ec7424da7099bce12be2d0fcc1b2d813a1fede1f8cda437bd4ff921',
     #                f)
-    print(get_project_summary('0x230128dC244F1bAA37Cec5Da1203Bfee00998e56'))
-
-    contribute_to('0xEF5CBC5CF3F3b90E398689E76EF3fa1A6D7E6AA2',
-                  '49e1e23e19ceb99fe57e034faccbd2213a54e61655c6da03c3eecc6af3eed13b',
-                  '0x230128dC244F1bAA37Cec5Da1203Bfee00998e56',
-                  2)
-
-    # print(get_all_projects())
+    # print(get_project_summary('0x230128dC244F1bAA37Cec5Da1203Bfee00998e56'))
     #
-    print(get_project_summary('0x230128dC244F1bAA37Cec5Da1203Bfee00998e56'))
+    # contribute_to('0xEF5CBC5CF3F3b90E398689E76EF3fa1A6D7E6AA2',
+    #               '49e1e23e19ceb99fe57e034faccbd2213a54e61655c6da03c3eecc6af3eed13b',
+    #               '0x230128dC244F1bAA37Cec5Da1203Bfee00998e56',
+    #               2)
+    #
+    # # print(get_all_projects())
+    #
+    # print(get_project_summary('0x230128dC244F1bAA37Cec5Da1203Bfee00998e56'))
     #
     # f = CreateRequestForm
     # f.project_addy = '0xAcCa2cB2745699205880C8980EB83A75D1092af4'
@@ -322,5 +322,5 @@ if __name__ == '__main__':
 
     # print(contract.functions.get_summary().call())
     #
-    # balance = web3.eth.getBalance(contract_addy)
-    # print(web3.fromWei(balance, "ether"))
+    balance = web3.eth.getBalance('0x5BcB1bc5eCba67f6e1ae8FDa3F81b815Ea0d2759')
+    print(web3.fromWei(balance, "ether"))

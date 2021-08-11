@@ -118,7 +118,6 @@ def transactions(credentials: HTTPAuthorizationCredentials = Security(security))
 @app.get("/api/projects", status_code=200, responses={
     401: {"description": "Invalid Token"}})
 def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
-
     token = credentials.credentials
     if auth_handler.decode_token(token):
         user = auth_handler.decode_token(token)
@@ -134,7 +133,7 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
                                     'recipient': request_detail[2],
                                     'completed': request_detail[3],
                                     'request_id': index,
-                                    'ready_payment': False,
+                                    'ready_payment': request_detail[4] >= project_details[6] / 2,
                                     'voted': database_utils.is_request_voted(user['username'],
                                                                              each_addy,
                                                                              index),
@@ -144,7 +143,8 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
                 'project_name': project_details[1],
                 'project_addy': each_addy,
                 'owner': project_details[0],
-                'participated': False,
+                'owner_username': user['username'],
+                'participated': database_utils.is_participated_in_project(user['username'], each_addy),
                 'description': project_details[2],
                 'minDonation': project_details[3],
                 'raisedDonation': project_details[4],
@@ -280,18 +280,21 @@ def make_payment(make_payment_form: MakePaymentForm,
     if auth_handler.decode_token(token):
         user = auth_handler.decode_token(token)
         try:
+            print(user)
+            print(make_payment_form)
+
             blockchain_utils.make_payment(user['wallet'], user['private_key'], make_payment_form)
         except Exception as err:
             print(err)
             traceback.print_exc()
-            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": err})
+            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"msg": 'server err'})
         else:
             print('Make payment to request %s of project %s'
                   % (make_payment_form.request_index, make_payment_form.project_addy))
 
             return JSONResponse(status_code=status.HTTP_201_CREATED,
                                 content={"msg": 'Make payment to request %s of project %s'
-                                            % (make_payment_form.request_index, make_payment_form.project_addy)})
+                                                % (make_payment_form.request_index, make_payment_form.project_addy)})
 
 
 if __name__ == "__main__":

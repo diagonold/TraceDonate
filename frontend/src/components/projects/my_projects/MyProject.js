@@ -29,7 +29,10 @@ export default function MyProject({ project }) {
             onClick={() => dispatch(setProjectModalOpened({
                 "donations": donations,
                 "requests": requests,
-                "project_address": project_addy
+                "project_address": project_addy,
+                "owner": owner,
+                "raisedDonation": raisedDonation,
+                "participated": participated
             }))}>
             <p>Project Name: {project_name}</p>
             <hr/>
