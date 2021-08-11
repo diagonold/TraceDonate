@@ -144,6 +144,7 @@ def projects(credentials: HTTPAuthorizationCredentials = Security(security)):
                 'project_name': project_details[1],
                 'project_addy': each_addy,
                 'owner': project_details[0],
+                'owner_username': user['username'],
                 'participated': False,
                 'description': project_details[2],
                 'minDonation': project_details[3],
