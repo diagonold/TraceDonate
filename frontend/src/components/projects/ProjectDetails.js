@@ -48,13 +48,13 @@ export default function ProjectDetails() {
 
   const details = useSelector((state) => state.projectModal.data);
 
-  const [ voted, setVoted ] = useState(false);
+  const [ justVoted, setJustVoted ] = useState(false);
 
   const [ justPaid, setJustPaid ] = useState(false);
   
   const closeModal = () => {
     dispatch(setProjectModalClosed());
-    if (voted || justPaid) {
+    if (justVoted || justPaid) {
       history.go(0);
     }
   }
@@ -66,8 +66,7 @@ export default function ProjectDetails() {
       "request_id": parseInt(request_id)
     });
     if (response.status === 201) {
-      setVoted(true);
-      closeModal();
+      setJustVoted(true);
     }
   }
 
@@ -80,11 +79,16 @@ export default function ProjectDetails() {
     if (response.status === 201) {
       console.log("ok");
       setJustPaid(true);
-      closeModal();
     }   
   }
 
-  const ProjectRequest = ({ request, project_address }) => {
+  const ProjectRequest = ({ 
+    request, 
+    project_address, 
+    owner, 
+    raisedDonation,  
+    participated
+  }) => {
       const {
         requestDescription,
         value,
@@ -95,6 +99,7 @@ export default function ProjectDetails() {
         ready_payment,
         num_of_vote
       } = request;
+
       return (
         <>
           <div className={"container-md my-3 p-3 border border-3 text-dark overflow-auto bg-white bg-gradient"}>
@@ -110,13 +115,22 @@ export default function ProjectDetails() {
               <p>{value}</p>
               <p>{recipient}</p>
               <div className="d-flex justify-content-center mt-4">
-              { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && !voted && (
-                <button type="button" className="btn btn-primary text-light" onClick={async () => await voteForRequest(project_address, request_id)}>Vote</button>
+              { participated && (
+                <>
+                { owner !== LocalStorageUtil.read("TraceDonateWallet") && !voted && (
+                  <button type="button" className="btn btn-primary text-light" onClick={async () => await voteForRequest(project_address, request_id)}>Vote</button>
+                )}
+                { owner !== LocalStorageUtil.read("TraceDonateWallet") && voted && (
+                  <button type="button" className="btn btn-outline-secondary text-secondary" disabled>You Voted For This Request</button>
+                )}
+              </>
               )}
-              { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && voted && (
-                <button type="button" className="btn btn-outline-secondary text-secondary" disabled>You Voted For This Request</button>
-              )}
-              { !completed && ready_payment && project_address === LocalStorageUtil.read("TraceDonateWallet") && (
+              { !completed 
+              && ready_payment 
+              && owner === LocalStorageUtil.read("TraceDonateWallet") 
+              && 
+              value <= raisedDonation
+              && (
                 <button type="button" className="btn btn-primary text-light" onClick={async () => await payForRequest(project_address, request_id)}>Make Payment</button>
               )}
               </div>
@@ -129,15 +143,21 @@ export default function ProjectDetails() {
         <Modal
           isOpen={modal}
           onRequestClose={closeModal}
-          style={voted ? customStylesVoted : customStylesNormal}
+          style={justVoted ? customStylesVoted : customStylesNormal}
         >
-          { !voted 
+          { !justVoted 
             ?
             <>
             <h4 className="text-center">Request(s)</h4>
             <hr/>
             {details.requests.map((request, key) => {
-                return <ProjectRequest request={request} project_address={details.project_address} key={key} />
+                return <ProjectRequest 
+                request={request} 
+                project_address={details.project_address} 
+                owner={details.owner} 
+                raisedDonation={details.raisedDonation} 
+                participated={details.participated}
+                key={key} />
             })}
             </>
             :
