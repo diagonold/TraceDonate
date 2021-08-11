@@ -107,9 +107,11 @@ export default function ProjectDetails() {
               <div className={`p-2 w-25 text-light text-center bg-gradient ${completed ? "bg-success" : "bg-danger"}`}>
                 { completed ? "Completed" : "Uncompleted" }
               </div>
+              {/*
               { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && (
                 <div className="p-2 w-25 text-dark text-center bg-warning bg-gradient">Votable</div>
               )}
+              */}
               </div>
               <p>{requestDescription}</p>
               <p>{value}</p>
