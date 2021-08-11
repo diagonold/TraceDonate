@@ -91,7 +91,9 @@ export default function ProjectDetails() {
         recipient,
         completed,
         request_id,
-        voted
+        voted,
+        ready_payment,
+        num_of_vote
       } = request;
       return (
         <>
@@ -114,7 +116,7 @@ export default function ProjectDetails() {
               { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && voted && (
                 <button type="button" className="btn btn-outline-secondary text-secondary" disabled>You Voted For This Request</button>
               )}
-              { !completed && project_address === LocalStorageUtil.read("TraceDonateWallet") && (
+              { !completed && ready_payment && project_address === LocalStorageUtil.read("TraceDonateWallet") && (
                 <button type="button" className="btn btn-primary text-light" onClick={async () => await payForRequest(project_address, request_id)}>Make Payment</button>
               )}
               </div>
