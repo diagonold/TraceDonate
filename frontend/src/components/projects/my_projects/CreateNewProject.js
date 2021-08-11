@@ -82,6 +82,12 @@ export default function CreateNewProject() {
             <h4 className="text-center">New Project</h4>
             <hr/>
                 <div className="mb-3 text-start">
+                    <label className="text-dark form-label">Name: </label>
+                    <input type="text" className="form-control" {...register("project_name")} />
+                    <div className="error text-danger">{errors.project_name?.message}</div>
+                </div>
+                <br/>
+                <div className="mb-3 text-start">
                     <label className="text-dark form-label">Description: </label>
                     <textarea type="text" className="form-control" {...register("description")} />
                     <div className="error text-danger">{errors.description?.message}</div>

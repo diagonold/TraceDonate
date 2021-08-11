@@ -99,7 +99,7 @@ export default function CreateNewRequest() {
                         <option value="" disabled selected>Select your option</option>
                         { projects.map((project, key) => {
                             if (project.owner === LocalStorageUtil.read("TraceDonateWallet")) {
-                                return <option value={project.owner} key={key}>{project.owner}</option>
+                                return <option value={project.owner} key={key}>{project.project_name}</option>
                             }
                         }) }
                     </select>
@@ -118,7 +118,7 @@ export default function CreateNewRequest() {
                         <option value="" disabled selected>Select your option</option>
                         { projects.map((project, key) => {
                             if (project.owner === LocalStorageUtil.read("TraceDonateWallet")) {
-                                return <option value={project.owner} key={key}>{project.owner}</option>
+                                return <option value={project.owner} key={key}>{project.project_name}</option>
                             }
                         }) }
                     </select>
