@@ -31,7 +31,7 @@ export default function Project({ project }) {
      const [ nonEmptyDonationAmount, setNonEmptyDonationAmount ] = useState(false);
 
      const donateToProject = async () => {
-         const donationAmount = parseInt(document.getElementById(`donationAmount_${owner}`).value);
+         const donationAmount = parseInt(document.getElementById(`donationAmount_${project_addy}`).value);
          if (isNaN(donationAmount) || donationAmount === minDonation) { setNonEmptyDonationAmount(false); return };
          const blockchainServices = new BlockchainServices(LocalStorageUtil.read("token"), history);
          const response = await blockchainServices.donate({
@@ -67,7 +67,7 @@ export default function Project({ project }) {
             </div>
             { owner !== LocalStorageUtil.read("TraceDonateWallet") && (
             <div className="container-sm d-flex justify-content-end">
-                <input type="number" id={`donationAmount_${owner}`} value={currentDonationAmount} onChange={(e) => {
+                <input type="number" id={`donationAmount_${project_addy}`} value={currentDonationAmount} onChange={(e) => {
                     setCurrentDonationAmount(parseInt(e.target.value) || minDonation);
                     if (currentDonationAmount > minDonation) {
                         setNonEmptyDonationAmount(true);
