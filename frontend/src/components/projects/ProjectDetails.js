@@ -92,11 +92,11 @@ export default function ProjectDetails() {
               <p>{value}</p>
               <p>{recipient}</p>
               <div className="d-flex justify-content-center mt-4">
-              { completed && !voted && (
+              { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && !voted && (
                 <button type="button" className="btn btn-primary text-light" onClick={async () => await voteForRequest(project_address, request_id)}>Vote</button>
               )}
-              { completed && voted && (
-                <button type="button" className="btn btn-outline-light text-light" disabled>You Voted For This Request</button>
+              { completed && project_address !== LocalStorageUtil.read("TraceDonateWallet") && voted && (
+                <button type="button" className="btn btn-outline-secondary text-secondary" disabled>You Voted For This Request</button>
               )}
               </div>
           </div>
