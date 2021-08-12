@@ -113,9 +113,11 @@ export default function ProjectDetails() {
               )}
               */}
               </div>
-              <p>{requestDescription}</p>
-              <p>{value}</p>
-              <p>{recipient}</p>
+              <p>Description: {requestDescription}</p>
+              <p>Requested Amount: {value}</p>
+              <p>Receipient: {recipient}</p>
+              <p>Current Vote Count: {num_of_vote}</p>
+              {/* <p>{recipient}</p> */}
               <div className="d-flex justify-content-center mt-4">
               { participated && (
                 <>
@@ -147,8 +149,7 @@ export default function ProjectDetails() {
           onRequestClose={closeModal}
           style={justVoted ? customStylesVoted : customStylesNormal}
         >
-          { !justVoted 
-            ?
+          { !justVoted && !justPaid && (
             <>
             <h4 className="text-center">Request(s)</h4>
             <hr/>
@@ -162,9 +163,13 @@ export default function ProjectDetails() {
                 key={key} />
             })}
             </>
-            :
+          )}
+          { justVoted && !justPaid && (
             <h4 className="text-center">You just voted request for {details.project_address}!</h4>
-          }
+          )}
+          { justPaid && !justVoted && (
+            <h4 className="text-center">You just paid a request </h4>
+          )}
         </Modal>
     );
 }
