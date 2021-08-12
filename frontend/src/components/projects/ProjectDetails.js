@@ -114,8 +114,8 @@ export default function ProjectDetails() {
               */}
               </div>
               <p>Description: {requestDescription}</p>
-              <p>Requested Amount: {value}</p>
-              <p>Receipient: {recipient}</p>
+              <p>Requested Amount: {value} ETH</p>
+              <p>Recipient Address: {recipient}</p>
               <p>Current Vote Count: {num_of_vote}</p>
               {/* <p>{recipient}</p> */}
               <div className="d-flex justify-content-center mt-4">

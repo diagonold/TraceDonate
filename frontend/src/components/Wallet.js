@@ -62,7 +62,7 @@ export default function Wallet() {
             <h3 className="text-center">Hello, {LocalStorageUtil.read("TraceDonateUsername") ? LocalStorageUtil.read("TraceDonateUsername") : "User"}</h3>
             <hr/>
             <p>Address: {walletDetail.wallet}</p>
-            <p>Balance: {walletDetail.balance}</p>
+            <p>Balance: {walletDetail.balance} ETH</p>
           </div>
         </Modal>
     );

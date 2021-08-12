@@ -26,8 +26,8 @@ export default function Transaction({ transaction }) {
         <div className="container-fluid my-3 p-4 border border-4 bg-white text-start transaction-card-text">
             <p>To: {to}</p>
             <hr/>
-            <p>Amount: {amount}</p>
-            <p>{ts}</p>
+            <p>Amount: {amount} ETH</p>
+            <p>Time: {ts}</p>
         </div>
     );
 }

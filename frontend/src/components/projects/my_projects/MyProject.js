@@ -35,6 +35,8 @@ export default function MyProject({ project }) {
                 "participated": participated
             }))}>
             <p>Project Name: {project_name}</p>
+            <p>Project Address: {project_addy}</p>
+
             <hr/>
             <p>Project Description: {description}</p>
             <p>Target Donation: {goal} ETH</p>

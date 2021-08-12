@@ -41,7 +41,7 @@ export default function DonationThankYou() {
           <div className="container-md">
             <h3 className="text-center">Thank You For Your Donation!</h3>
             <hr/>
-            <p>You donated {details.amount} to {details.receiver}</p>
+            <p>You donated {details.amount} ETH to {details.receiver}</p>
           </div>
         </Modal>
     );
