@@ -107,7 +107,7 @@ export default function CreateNewRequest() {
                 </div>
                 <br/>
                 <div className="mb-3 text-start ">
-                    <label className="text-dark form-label">Description: </label>
+                    <label className="text-dark form-label">Request Description: </label>
                     <textarea type="text" className="form-control" {...register("description")} />
                     <div className="error text-danger">{errors.description?.message}</div>
                 </div>
@@ -119,7 +119,7 @@ export default function CreateNewRequest() {
                 </div>
                 <br/>
                 <div className="mb-3 text-start ">
-                    <label className="text-dark form-label">Amount: </label>
+                    <label className="text-dark form-label">Amount (ETH): </label>
                     <input type="number" className="form-control" defaultValue={0} {...register("amount")} />
                     <div className="error text-danger">{errors.amount?.message}</div>
                 </div>
