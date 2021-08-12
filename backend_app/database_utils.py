@@ -82,6 +82,22 @@ def get_all_project_addy():
         return project_addy_ls
 
 
+def get_project_owner(project_addy):
+    with sqlite3.connect(DB_FILE) as con:
+        cur = con.cursor()
+        cur.execute("""
+                    SELECT a.username 
+                    FROM account a 
+                    LEFT JOIN projects p 
+                    ON a.id = p.owner_id 
+                    WHERE p.project_addy = (?)
+                    """,
+                    (project_addy,))
+        res = cur.fetchall()
+
+        return res[0][0]
+
+
 def donate(username, project_addy, amount):
     with sqlite3.connect(DB_FILE) as con:
         cur = con.cursor()
@@ -138,14 +154,13 @@ def is_request_voted(username, project_addy, request_index):
                     SELECT v.*
                     FROM votes v 
                     LEFT JOIN account a, projects p
-                    ON a.id = v.account_id and p.project_addy = p.project_addy 
+                    ON a.id = v.account_id and p.id = v.project_id 
                     WHERE a.username = (?) 
                     AND p.project_addy = (?)
                     AND v.request_index = (?)
                     """,
                     (username, project_addy, request_index))
         res = cur.fetchall()
-        print(len(res))
         return len(res) > 0
 
 
@@ -162,7 +177,6 @@ def is_participated_in_project(username, project_addy):
                     """,
                     (username, project_addy))
         res = cur.fetchall()
-        print(len(res))
         return len(res) > 0
 
 
@@ -180,5 +194,5 @@ if __name__ == '__main__':
     # vote_request('string',
     #              '0xebF2E1C8814d94B301a248ee0d2a448E385F3744',
     #              0)
-    a = is_participated_in_project('test', '0x6488533De7bd7e2D1CB725e94A6BA37d741942ae')
+    a = get_project_owner('0x9707baE9B1ccC55B4792Ca44dFCd955697515823')
     print(a)

@@ -1,10 +1,14 @@
 import json
+import logging
+
 from web3 import Web3
 from models import *
 
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-projectHub_address = '0x9C8d406CB8C7275e9284A56cd66761821c7E0D54'
+projectHub_address = '0xF13bdF6E71611394d7FB6De14f453c17548c192D'
 
 
 def create_account():
@@ -24,8 +28,8 @@ def send_payment(from_addy, from_key, to_addy, amount):
         'gasPrice': web3.toWei('50', 'gwei'),
     }
     signed_tx = web3.eth.account.signTransaction(tx, from_key)
-    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-    print(web3.toHex(tx_hash))
+    txn_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    logging.info('send_payment hash: ' + web3.toHex(txn_hash))
 
 
 # This is hard to do!
@@ -36,7 +40,6 @@ def get_transaction(account_addy):
 def get_balance(account_addy):
     balance = web3.eth.getBalance(account_addy)
     balance_in_ether = web3.fromWei(balance, "ether")
-    print(balance_in_ether)
     return balance_in_ether
 
 
@@ -49,7 +52,6 @@ def contribute_to(from_addy, from_key, to_addy, amount):
     abi = get_abi_from_json('../build/contracts/Project.json')
     contract = web3.eth.contract(address=to_addy, abi=abi)
     nonce = web3.eth.getTransactionCount(from_addy)
-    # TODO check amount <= balance
     txn = contract.functions.contribute().buildTransaction({
         'gas': 2000000,
         'gasPrice': web3.toWei('50', 'gwei'),
@@ -58,8 +60,8 @@ def contribute_to(from_addy, from_key, to_addy, amount):
     })
     signed_txn = web3.eth.account.signTransaction(txn, private_key=from_key)
     txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    # TODO Store Transaction hash
-    print(web3.toHex(txn_hash))
+
+    logging.info('contribute_to hash: ' + web3.toHex(txn_hash))
 
 
 def create_project(from_addy, from_key, create_project_form: CreateProjectForm):
@@ -83,7 +85,6 @@ def create_project(from_addy, from_key, create_project_form: CreateProjectForm):
     tx_receipt = web3.eth.waitForTransactionReceipt(txn_hash)
     logs = contract.events.ProjectCreated().processReceipt(tx_receipt)
     project_addy = logs[0]['args']['projectAddress']
-    print(project_addy)
     return project_addy
 
 
@@ -92,13 +93,6 @@ def get_all_projects():
     contract = web3.eth.contract(address=projectHub_address, abi=abi)
     projects_ls = contract.functions.get_projects().call()
     return projects_ls
-
-
-# def get_project_requests(project_addy):
-#     abi = get_abi_from_json('../build/contracts/Project.json')
-#     contract = web3.eth.contract(address=project_addy, abi=abi)
-#     print(contract.functions.requests.call())
-#     return
 
 
 def get_project_summary(project_addy):
@@ -119,7 +113,6 @@ def get_project_summary(project_addy):
     project_details[3] = int(web3.fromWei(project_details[3], 'ether'))
     project_details[4] = int(web3.fromWei(project_details[4], 'ether'))
     project_details[5] = int(web3.fromWei(project_details[5], 'ether'))
-    print(project_details)
     return project_details
 
 
@@ -127,8 +120,6 @@ def create_request(owner_addy, owner_key, create_request_form: CreateRequestForm
     abi = get_abi_from_json('../build/contracts/Project.json')
     contract = web3.eth.contract(address=create_request_form.project_addy, abi=abi)
     nonce = web3.eth.getTransactionCount(owner_addy)
-    # contract.functions.create_request(request_details, '0x3d6924A60Bd4548621FBdEE9E7367F548EC4C2ab',
-    #                                   web3.toWei(10, 'ether')).transact()
 
     txn = contract.functions.create_request(create_request_form.description,
                                             create_request_form.receiver_addy,
@@ -140,7 +131,8 @@ def create_request(owner_addy, owner_key, create_request_form: CreateRequestForm
     })
     signed_txn = web3.eth.account.signTransaction(txn, private_key=owner_key)
     txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    print(web3.toHex(txn_hash))
+
+    logging.info('create_request hash: ' + web3.toHex(txn_hash))
 
 
 def make_payment(owner_addy, owner_key, make_payment_form: MakePaymentForm):
@@ -156,7 +148,8 @@ def make_payment(owner_addy, owner_key, make_payment_form: MakePaymentForm):
     })
     signed_txn = web3.eth.account.signTransaction(txn, private_key=owner_key)
     txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    print(web3.toHex(txn_hash))
+
+    logging.info('make_payment hash: ' + web3.toHex(txn_hash))
 
 
 def get_all_requests(project_addy):
@@ -164,7 +157,7 @@ def get_all_requests(project_addy):
     requests_ls = []
     for i in range(num_of_request):
         requests_ls.append(get_request_details(project_addy, i))
-    print(requests_ls)
+
     return requests_ls
 
 
@@ -173,7 +166,7 @@ def get_request_details(project_addy, request_index):
     contract = web3.eth.contract(address=project_addy, abi=abi)
     request_details = contract.functions.get_request_details(request_index).call()
     request_details[1] = int(web3.fromWei(request_details[1], 'ether'))
-    print(request_details)
+
     return request_details
 
 
@@ -189,7 +182,8 @@ def vote_request(donor_addy, donor_key, project_addy, request_index):
     })
     signed_txn = web3.eth.account.signTransaction(txn, private_key=donor_key)
     txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    print(web3.toHex(txn_hash))
+
+    logging.info('vote_request hash: ' + web3.toHex(txn_hash))
 
 
 if __name__ == '__main__':
