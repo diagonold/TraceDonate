@@ -106,7 +106,7 @@ contract Project{
     }
     
     
-    function make_payment( uint index) public onlyAdmin goalReached{
+    function make_payment( uint index) public onlyAdmin {
         // Directly reference the specfic spending request inside the request dynamic array
         Request storage thisRequest = requests[index];
         
