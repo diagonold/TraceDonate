@@ -87,11 +87,11 @@ contract Project{
         emit CreateRequest( msg.sender, _recipient, _requestDescription, _value);
     }
     
-    function vote_request(uint index) public goalReached{
+    function vote_request(uint index) public {
         
         // Direct Reference a specific spending request inside the requests dynamic array
         // by calling storage here,, any changes that we make to thisRequest will
-        // also affect the request in tthe specific index in requests array
+        // also affect the request in the specific index in requests array
         Request storage thisRequest =  requests[index];
         // Checking for Conditions
         // The voter also needs to be a donor
