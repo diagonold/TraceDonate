@@ -82,25 +82,25 @@ export default function CreateNewProject() {
             <h4 className="text-center">New Project</h4>
             <hr/>
                 <div className="mb-3 text-start">
-                    <label className="text-dark form-label">Name: </label>
+                    <label className="text-dark form-label">Project Name: </label>
                     <input type="text" className="form-control" {...register("project_name")} />
                     <div className="error text-danger">{errors.project_name?.message}</div>
                 </div>
                 <br/>
                 <div className="mb-3 text-start">
-                    <label className="text-dark form-label">Description: </label>
+                    <label className="text-dark form-label">Project Description: </label>
                     <textarea type="text" className="form-control" {...register("description")} />
                     <div className="error text-danger">{errors.description?.message}</div>
                 </div>
                 <br/>
                 <div className="mb-3 text-start ">
-                    <label className="text-dark form-label">Minimum Donation Amount: </label>
+                    <label className="text-dark form-label">Minimum Donation Amount (ETH): </label>
                     <input type="number" className="form-control" defaultValue={0} {...register("min_donation_amount")} />
                     <div className="error text-danger">{errors.min_donation_amount?.message}</div>
                 </div>
                 <br/>
                 <div className="mb-3 text-start ">
-                    <label className="text-dark form-label">Goal: </label>
+                    <label className="text-dark form-label">Goal (ETH): </label>
                     <input type="number" className="form-control" defaultValue={0} {...register("goal")} />
                     <div className="error text-danger">{errors.goal?.message}</div>
                 </div>

@@ -132,8 +132,8 @@ export default function ProjectDetails() {
               { !completed 
               && ready_payment 
               && owner === LocalStorageUtil.read("TraceDonateWallet") 
-              && 
-              value <= raisedDonation
+              // &&
+              // value <= raisedDonation
               && (
                 <button type="button" className="btn btn-primary text-light" onClick={async () => await payForRequest(project_address, request_id)}>Make Payment</button>
               )}
