@@ -6,6 +6,7 @@ import { setWalletModalOpened } from '../../redux/reducers/walletModalReducer';
 import { useHistory } from 'react-router-dom';
 
 import AuthServices from '../../services/Auth';
+import LocalStorageUtil from '../../utils/LocalStorage';
 
 const authServices = new AuthServices();
 
@@ -34,7 +35,7 @@ export default function NavBar() {
                         <a class="nav-link text-light" href="#" onClick={() => dispatch(changeToPage2())}>My Transactions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="#" onClick={() => dispatch(setWalletModalOpened())}>My Wallet</a>
+                        <a class="nav-link text-light" href="#" onClick={() => dispatch(setWalletModalOpened())}>{LocalStorageUtil.read("TraceDonateUsername")}'s Wallet</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-danger" href="#" onClick={() => { 
