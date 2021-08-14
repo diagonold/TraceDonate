@@ -6,10 +6,7 @@
 - Run this command 'npm install truffle -g'
 - Create a new project with truffle.init
 
-## Metamask
-- Add metamask extension on chrome
 
-## Truffle and metamask
 
 ## Ganache
 - Ganache gives us environment for local blockchain with using truffle commands we can communicate with ganache.

@@ -7,7 +7,7 @@ from models import *
 
 ganache_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(ganache_url))
-projectHub_address = '0xF13bdF6E71611394d7FB6De14f453c17548c192D'
+projectHub_address = '0xdf77cD690C9B01F0E692AC94bCF475996b32633E'
 
 
 def create_account():
@@ -84,6 +84,7 @@ def create_project(from_addy, from_key, create_project_form: CreateProjectForm):
     tx_receipt = web3.eth.waitForTransactionReceipt(txn_hash)
     logs = contract.events.ProjectCreated().processReceipt(tx_receipt)
     project_addy = logs[0]['args']['projectAddress']
+    print(logs)
     return project_addy
 
 

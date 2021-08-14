@@ -194,5 +194,5 @@ if __name__ == '__main__':
     # vote_request('string',
     #              '0xebF2E1C8814d94B301a248ee0d2a448E385F3744',
     #              0)
-    a = get_project_owner('0x9707baE9B1ccC55B4792Ca44dFCd955697515823')
+    a = is_request_voted('donor','0x2a804D98c43884d727502c2cfEFc761c7687B798', 1)
     print(a)
